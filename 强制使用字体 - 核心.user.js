@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         强制使用字体 - 核心
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  所有 强制使用字体 脚本的核心脚本
 // @author       BackRunner
 // @include      *
