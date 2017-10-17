@@ -25,7 +25,7 @@ function changeFont(s_font,mode){
 					modStyle.id = 'modCSS_font';
 					document.body.appendChild(modStyle);
 				}   
-				modStyle.innerHTML = '*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not(i){font-family:' + s_font + 'Arial,stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,tm-detail-font,office365icons,MWF-MDL2,global-iconfont !important;';
+				modStyle.innerHTML = '*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not(i){font-family:' + s_font + ',Arial,stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,tm-detail-font,office365icons,MWF-MDL2,global-iconfont !important;';
 			},300);
 		}
 	}
