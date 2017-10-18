@@ -3,7 +3,7 @@
 // @namespace    https://greasyfork.org/zh-CN/scripts/23687
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
 // @contributionURL https://sinacloud.net/backrunner/img/alipay.jpg
-// @version      2.7.0
+// @version      2.7.1
 // @description  【可能是你遇到的最好用的贴吧精简脚本】，完全去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
 // @author       BackRunner
 // @include      *://tieba.baidu.com/*
@@ -28,6 +28,9 @@
 // 如果您觉得本脚本好用可以赞助我一点零花
 // donate@backrunner.top (支付宝)
 // === 更新日志 ===
+// 2017.10.18 - 2.7.1
+// 对倒序看帖做了实验性的改动并且加入了一个可调整的延迟时间
+// 修复倒序看帖在翻页时的问题。
 // 2017.10.14 - 2.7.0
 // 倒序看帖（实验性）
 // 2017.10.8 - 2.6.5
@@ -41,6 +44,7 @@
     //=========================
     var sleepTime;
     var sleepTimeWhenPageTurn;
+    var reverseSleepTime;
     var postprocess;
     var homePageProcess;
     var groupPageProcess;
@@ -105,12 +109,12 @@
             //导航栏翻页监听
             addListenerToNav();
             //列表翻页监听
-            if (window.location.search.indexOf("kw=")!=-1){
+            if (window.location.search.indexOf("kw=")!= -1){
                 addListenerToList();
                 adinListClean();
                 disableForumCard();
             } else {
-                if (window.location.href.indexOf("tieba.baidu.com/p/") !== -1){
+                if (window.location.href.indexOf("tieba.baidu.com/p/") != -1){
                     addListenerToPage();
                     tpointADClean();
                     adinPageClean();
@@ -152,13 +156,13 @@
                 //导航栏翻页监听
                 addListenerToNav();
                 //列表翻页监听
-                if (window.location.search.indexOf("kw=")!=-1){
+                if (window.location.search.indexOf("kw=")!= -1){
                     addListenerToList();
                     adinListClean();
                     disableForumCard();
                     reStart();
                 } else {
-                    if (window.location.href.indexOf("tieba.baidu.com/p/") !== -1){
+                    if (window.location.href.indexOf("tieba.baidu.com/p/") != -1){
                         addListenerToPage();
                         tpointADClean();
                         adinPageClean();
@@ -231,6 +235,7 @@
     function initialize(){
         sleepTime = initialize_var("sleepTime",300);
         sleepTimeWhenPageTurn = initialize_var("sleepTimeWhenPageTurn",800);
+        reverseSleepTime = initialize_var("reverseSleepTime",200);
         postprocess = initialize_var("postprocess",true);
         isRedirect = initialize_var("isRedirect",true);
         homePageProcess = initialize_var("homePageProcess",true);
@@ -593,12 +598,14 @@
             }
             switch (version){
                 default:
-                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n更新倒序看帖功能（实验性），该功能默认不开启，如有需要请手动开启。\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
+                    //版本更新时删除废弃变量
+                    deleteTrashValue();
+                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n对倒序看帖做了实验性的改动并且加入了一个可调整的延迟时间。\n修复倒序看帖在翻页时的问题。\n倒序看帖功能默认不开启，如有需要请手动开启。\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
                 case "未知":
                     s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n添加话题帖显示开关\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
-                case "2.7.0":
+                case "2.7.1":
                     s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";
                     break;
             }
@@ -660,6 +667,7 @@
                 createMenuItem(menu,0,"sleepTime","主脚本延迟时间");
                 createMenuItem(menu,0,"delayScriptRunTimes","延迟脚本执行次数","");
                 createMenuItem(menu,0,"sleepTimePage","翻页脚本延迟时间","");
+                createMenuItem(menu,0,"reverseSleepTime","倒序查看脚本延迟时间","");
                 createMenuItem(menu,0,"checkrate","脚本延迟时间倍率","");
                 createMenuItem(menu,2,"refresh","刷新页面","刷新");
                 createMenuItem(menu,2,"submit","提交设置","提交");
@@ -756,6 +764,7 @@
         menuInitialize_input('sleepTime',sleepTime);
         menuInitialize_input('delayScriptRunTimes',delayScriptRunTimes);
         menuInitialize_input('sleepTimePage',sleepTimeWhenPageTurn);
+        menuInitialize_input('reverseSleepTime',reverseSleepTime);
         menuInitialize_input('checkrate',checkrate);
     }
     //菜单checkbox初始化
@@ -818,6 +827,7 @@
         sleepTime = convertNumValue('sleepTime');
         delayScriptRunTimes = convertNumValue('delayScriptRunTimes');
         sleepTimeWhenPageTurn = convertNumValue('sleepTimePage');
+        reverseSleepTime = convertNumValue('reverseSleepTime');
         checkrate = convertNumValue('checkrate');
 
         if (postprocess){
@@ -847,6 +857,7 @@
             GM_deleteValue("displayLive");
             GM_deleteValue("displaySign");
             GM_deleteValue("sleepTimeWhenPageTurn");
+            GM_deleteValue("reverseSleepTime");
             GM_deleteValue("homePageProcess");
             GM_deleteValue("homeProcess");
             GM_deleteValue("isHeadimg");
@@ -902,6 +913,7 @@
         GM_setValue("displayLive",displayLive);
         GM_setValue("displaySign",displaySign);
         GM_setValue("sleepTimeWhenPageTurn",sleepTimeWhenPageTurn);
+        GM_setValue("reverseSleepTime",reverseSleepTime);
         GM_setValue("homePageProcess",homePageProcess);
         GM_setValue("homeProcess",homeProcess);
         GM_setValue("isHeadimg",isHeadimg);
@@ -1021,11 +1033,12 @@
     //倒序看帖按钮添加
     function reverseorder(){
         if (reverse){
+            //判定当前状态
+            var status = initialize_var('reverse_status',false);
             if (document.querySelector('#br_reverse') === null){
                 var rightbtn = document.getElementsByClassName('core_title_btns')[0];
                 var btn = document.createElement('a');
-                //判定当前状态
-                var status = initialize_var('reverse_status',false);
+                console.warn('贴吧页面精简 by BackRunner: 正在创建倒序查看按钮');
                 //判定是否为另一个帖子
                 var lastpage = initialize_var('reverse_lastpage','');
                 var currenthref = window.location.href;
@@ -1047,7 +1060,7 @@
                 rightbtn.addEventListener('click',reverse_click);
                 currenthref = window.location.href;
                 reverse_contents();
-            }
+            }            
         }
     }
     //倒序看帖点击事件
@@ -1058,7 +1071,7 @@
             //恢复正序
             GM_setValue('reverse_status',false);
             btns = document.getElementsByClassName('pb_list_pager')[0].children;
-            if (btns.length == 0){
+            if (btns.length === 0){
                 window.location.reload(true);
             }else {
                 for (var i = 0;i < btns.length;i++){
@@ -1072,13 +1085,13 @@
             //倒序
             GM_setValue('reverse_status',true);
             btns = document.getElementsByClassName('pb_list_pager')[0].children;
-            if (btns.length == 0){
+            if (btns.length === 0){
                 window.location.reload(true);
             }else {
-                for (var i = 0;i<btns.length;i++){
-                    if (btns[i].innerHTML == '尾页'){
+                for (var j = 0;j<btns.length;j++){
+                    if (btns[j].innerHTML == '尾页'){
                         //向尾页跳转
-                        window.location.href = btns[i].href;
+                        window.location.href = btns[j].href;
                     }
                 }
             }
@@ -1086,14 +1099,41 @@
     }
     //翻转当前页内容
     function reverse_contents(){
-        var status = initialize_var('reverse_status',false);
-        if (status){
-            list = document.getElementById('j_p_postlist');
-            contents = list.children;
-            //倒序
-            for(i = contents.length - 1; i >= 0; i--) {
-                list.appendChild(contents[i]);
+        setTimeout(function(){
+            var status = initialize_var('reverse_status',false);
+            if (status){
+                console.warn('贴吧页面精简 by BackRunner: 正在翻转当前页内容');
+
+                //获取当前的pn
+                var search = window.location.search;
+                var searchs = search.split('&');
+                var pn;
+                for (var child = 0;child<searchs.length;child++){
+                    if (searchs[child].indexOf('pn=') !== -1){
+                        pn = searchs[child].replace('?','').replace('pn=','');
+                    }
+                }
+                var list = document.getElementById('j_p_postlist');
+                var contents = list.children;
+                console.warn(contents);
+                if (contents.length == 1 && contents[0].id == "j_p_postlist"){
+                    list = document.getElementsByClassName('p_postlist')[1];
+                    contents = list.children;
+                }
+                console.warn(contents);
+                //倒序
+                for(i = contents.length - 1; i >= 0; i--) {
+                    list.appendChild(contents[i]);
+                }
             }
+        },reverseSleepTime);
+    }
+    //版本更新删除废弃变量
+    function deleteTrashValue(){
+        var trashList = {};
+        for (var i = 0;i<trashList.length;i++){
+            GM_deleteValue("trashList[i]");
         }
+        console.warn('贴吧页面精简 by BackRunner: 版本更新，已删除废弃变量');
     }
 })();
