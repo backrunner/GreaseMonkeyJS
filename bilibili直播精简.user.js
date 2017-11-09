@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         bilibili直播精简
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      3.0 beta
+// @version      3.0 beta2
 // @description  【可能是你遇到的最好用的Bilibili直播精简脚本】，送礼随心开关，页面清爽无广告！
 // @author       BackRunner
 // @match        *://live.bilibili.com/*
@@ -20,6 +20,7 @@
 // == 更新日志 ==
 // 2017.11.08 - 3.0
 // 简单地针对新版的Bilibili直播进行了重制，后续将更新更多的调整。
+// beta2:优化CSS
 // 如果遇到Bug，请及时反馈
 // ==============
 
@@ -107,6 +108,8 @@
         //footer
         cssText += "#link-footer-vm {display:none !important}";
 
+        cssText += ".backrunner-ctrlbtn {background:#23ade5;margin-top:5px;border-radius:5px;cursor:pointer;border:0;height:15px;margin-left:5px;}";
+        cssText += ".attention-btn-ctnr {align:right !important;}";
 
         if (hideUserInfo){
             cssText += "#rank-list-vm {display:none !important}";
@@ -226,7 +229,7 @@
 				case "未知":
 					s_update += "欢迎使用 Bilibili直播页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n您可以通过页面上的按钮开关礼物面板和用户信息显示\n";
 					break;             
-				case "3.0 beta":
+				case "3.0 beta2":
 					s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";   
 					break;
 			}
