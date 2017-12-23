@@ -3,7 +3,7 @@
 // @namespace    https://greasyfork.org/zh-CN/scripts/23687
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
 // @contributionURL https://sinacloud.net/backrunner/img/alipay.jpg
-// @version      2.7.3
+// @version      2.7.4
 // @description  【可能是你遇到的最好用的贴吧精简脚本】，完全去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
 // @author       BackRunner
 // @include      *://tieba.baidu.com/*
@@ -28,6 +28,8 @@
 // 如果您觉得本脚本好用可以赞助我一点零花
 // donate@backrunner.top (支付宝)
 // === 更新日志 ===
+// 2017 - 2.7.4
+// 更新一些css规则
 // 2017.12.23 - 2.7.3.1
 // 最近贴吧列表页顶部出了一些问题，作者对此做了一些调整
 // 2017.11.11 - 2.7.2
@@ -407,6 +409,10 @@
                 cssText += '#spage_game_tab_wrapper {display: none !important;}';
                 //公告板
                 cssText += '#notice_item {display: none !important;}';
+                //调整位置 *20171223
+                cssText += '.right-sec {margin-top:-15px !important;}';
+                //贴吧精选专题 *20171223
+                cssText += '.aggregate_entrance_wrap {display:none !important;}';
             }
         }
 
@@ -614,12 +620,12 @@
                 default:
                     //版本更新时删除废弃变量
                     deleteTrashValue();
-                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n最近贴吧列表页顶部出了一些问题，作者对此做了一些调整\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
+                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n\n最近贴吧列表页顶部出了一些问题，作者对此做了一些调整\n新增CSS规则\n修复倒序看帖的数个问题\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
                 case "未知":
                     s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n添加话题帖显示开关\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
-                case "2.7.3.1":
+                case "2.7.4":
                     s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";
                     break;
             }
