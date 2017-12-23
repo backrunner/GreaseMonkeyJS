@@ -427,8 +427,14 @@
         //列表页头图精简
         if (isHeadimg){
             if (window.location.href.indexOf("tieba.baidu.com/f") !== -1){
-                cssText += ".head_banner_img {display: none !important}";
-                cssText += ".head_ad_pop {display: none !important}";
+                cssText += ".head_banner_img,.head_ad_pop,.head_banner {display: none !important}";
+                //顶部css调整 *20171223
+                cssText += '.head_content {padding-top:20px !important}';
+                cssText += '.card_banner,.plat_recom_carousel {display:none !important}';
+                cssText += '.card_head {width:70px !important;height:70px !important;margin-bottom:10px !important;margin-top:100px !important}';
+                cssText += '.card_head_img {width:70px !important;height:70px !important;}';
+                cssText += '.card_title {margin-left:-50px !important;}';
+                cssText += '.card_slogan {margin-left:-50px !important;}';
             }
         }
 
@@ -441,14 +447,6 @@
 
         //底部信息css
         cssText += '#footer {padding-bottom:0px !important;}';
-
-        //顶部css调整 *20171223
-        cssText += '.head_content {padding-top:20px !important}';
-        cssText += '.card_banner,.plat_recom_carousel {display:none !important}';
-        cssText += '.card_head {width:70px !important;height:70px !important;margin-bottom:10px !important}';
-        cssText += '.card_head_img {width:70px !important;height:70px !important;}';
-        cssText += '.card_title {margin-left:-50px !important;}';
-        cssText += '.card_slogan {margin-left:-50px !important;}';
 
         console.log('贴吧页面精简 by BackRunner: css创建完成');
 
@@ -612,7 +610,7 @@
                 default:
                     //版本更新时删除废弃变量
                     deleteTrashValue();
-                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n最近贴吧列表页顶部出了一些问题，作者对此做了一些调整\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
+                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n最近贴吧列表页顶部出了一些问题，作者对此做了一些调整（需要开启精简头图功能）\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
                 case "未知":
                     s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n添加话题帖显示开关\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
