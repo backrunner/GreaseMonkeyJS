@@ -3,7 +3,7 @@
 // @namespace    https://greasyfork.org/zh-CN/scripts/23687
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
 // @contributionURL https://sinacloud.net/backrunner/img/alipay.jpg
-// @version      2.7.5
+// @version      2.7.6
 // @description  【可能是你遇到的最好用的贴吧精简脚本】，完全去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
 // @author       BackRunner
 // @include      *://tieba.baidu.com/*
@@ -28,8 +28,8 @@
 // 如果您觉得本脚本好用可以赞助我一点零花
 // donate@backrunner.top (支付宝)
 // === 更新日志 ===
-// 2018.1.20 - 2.7.5
-// 更新过滤规则
+// 2018.3.22 - 2.7.6
+// 对列表广告进行增强精简
 // ================
 
 
@@ -572,6 +572,17 @@
             }
         }
         console.log('贴吧页面精简 by BackRunner: 列表内广告精简完毕，共精简 '+ num + ' 个');
+        //新增根据class过滤
+        var list = document.getElementById('thread_list').children;
+        for (i=0;i<list.length;i++){
+            var className=list[i].getAttribute('class');
+            if (className != null){
+                if (list[i].getAttribute('class').indexOf('thread_top_list_folder')==-1 && list[i].getAttribute('class').indexOf('j_thread_list')==-1){
+                    list[i].parentNode.removeChild(list[i]);
+                }
+            }
+        }
+        console.log('贴吧页面精简 by BackRunner: 扫描列表精简其他广告');
     }
 
     //贴内广告
@@ -617,12 +628,12 @@
                 default:
                     //版本更新时删除废弃变量
                     deleteTrashValue();
-                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n更新过滤规则\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
+                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n对列表广告进行增强精简\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
                 case "未知":
-                    s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n添加话题帖显示开关\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
+                    s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
-                case "2.7.5":
+                case "2.7.6":
                     s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";
                     break;
             }
