@@ -5,6 +5,8 @@
 // @description  我就是喜欢微软雅黑！【解决显示方框问题】
 // @author       BackRunner
 // @include      *
+// @exclude      *.seedr.cc*
+// @exclude      *console.cloud.google.com/cloudshell*
 // @run-at       document-start
 // @grant        unsafeWindow
 // @license      MIT
