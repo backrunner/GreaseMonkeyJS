@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         强制使用思源黑体
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      2.0
+// @version      2.0.1
 // @description  我就是喜欢思源黑体！【解决显示方框问题】
 // @author       BackRunner
 // @run-at       document-start
@@ -12,5 +12,5 @@
 // ==/UserScript==
 
 (function() {
-	changeFont("Source Han Sans",1);
+	changeFont("Source Han Sans",2);
 })();

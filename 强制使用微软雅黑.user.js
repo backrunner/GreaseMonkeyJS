@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         强制使用微软雅黑
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      2.0
+// @version      2.0.1
 // @description  我就是喜欢微软雅黑！【解决显示方框问题】
 // @author       BackRunner
 // @include      *
@@ -15,5 +15,5 @@
 // 遇到显示方框请手动添加排除或反馈
 // ===============
 (function() {
-	changeFont("Microsoft Yahei",1);
+	changeFont("Microsoft Yahei",2);
 })();

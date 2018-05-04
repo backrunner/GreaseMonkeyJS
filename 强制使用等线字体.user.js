@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         强制使用等线字体
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      2.0
+// @version      2.0.1
 // @description  我就是喜欢等线！【解决显示方框问题】
 // @author       BackRunner
 // @run-at       document-start
@@ -15,5 +15,5 @@
 // 遇到显示方框请手动添加排除或反馈
 // ===============
 (function() {
-    changeFont("DengXian",1);
+    changeFont("DengXian",2);
 })();
