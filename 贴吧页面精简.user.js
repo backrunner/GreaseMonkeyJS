@@ -3,7 +3,7 @@
 // @namespace    https://greasyfork.org/zh-CN/scripts/23687
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
 // @contributionURL https://sinacloud.net/backrunner/img/alipay.jpg
-// @version      2.7.7
+// @version      2.7.8
 // @description  【可能是你遇到的最好用的贴吧精简脚本】，完全去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
 // @author       BackRunner
 // @include      *://tieba.baidu.com/*
@@ -28,6 +28,8 @@
 // 如果您觉得本脚本好用可以赞助我一点零花
 // donate@backrunner.top (支付宝)
 // === 更新日志 ===
+// 2018.05.09 - 2.7.8
+// 添加自动收起指引功能，该功能默认开启。
 // 2018.05.04 - 2.7.7
 // 调整未登录状态下的主页布局
 // ================
@@ -52,6 +54,7 @@
     var isRedirect;
     var displayLive;
     var displaySign;
+    var autoCloseGuide;
     //底部信息div
     var foot;
     var homePageMatch = RegExp("(http|https):\/\/tieba.baidu.com\/(#*$)|(http|https):\/\/tieba.baidu.com\/(index\.html#*$)");
@@ -108,6 +111,8 @@
                 addListenerToList();
                 adinListClean();
                 disableForumCard();
+                //自动收起指引 *20180509
+                closeGuide();
             } else {
                 if (window.location.href.indexOf("tieba.baidu.com/p/") != -1){
                     addListenerToPage();
@@ -155,6 +160,8 @@
                     addListenerToList();
                     adinListClean();
                     disableForumCard();
+                    //自动收起指引 *20180509
+                    closeGuide();
                     reStart();
                 } else {
                     if (window.location.href.indexOf("tieba.baidu.com/p/") != -1){
@@ -243,6 +250,7 @@
         delayScriptRunTimes = initialize_var("delayScriptRunTimes",6);
         displayLive = initialize_var("displayLive",false);
         displaySign = initialize_var("displaySign",false);
+        autoCloseGuide = initialize_var("autoCloseGuide",true);
     }
     function initialize_var(name,defaultSet){
         var obj = GM_getValue(name,defaultSet);
@@ -323,7 +331,6 @@
         //吧主专版
         cssText += '.tbui_fbar_bazhu {display: none !important;}';
         //右侧可点击广告
-        console.log (window.location.href);
         if (window.location.href !== "http://tieba.baidu.com/" && window.location.href !== "https://tieba.baidu.com/"){
             cssText += '.j_click_stats {display: none !important;}';
         }
@@ -430,8 +437,8 @@
         }
 
         //列表页头图精简
-        if (isHeadimg){
-            if (window.location.href.indexOf("tieba.baidu.com/f") !== -1){
+        if (window.location.href.indexOf("tieba.baidu.com/f") !== -1){
+            if (isHeadimg){
                 cssText += ".head_banner_img,.head_ad_pop,.head_banner {display: none !important}";
                 //顶部css调整 *20171223
                 cssText += '.head_content {padding-top:20px !important}';
@@ -630,12 +637,12 @@
                 default:
                     //版本更新时删除废弃变量
                     deleteTrashValue();
-                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n调整未登录状态下的主页布局\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
+                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n添加自动收起指引功能，该功能默认开启。\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
                 case "未知":
                     s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
-                case "2.7.7":
+                case "2.7.8":
                     s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";
                     break;
             }
@@ -690,6 +697,7 @@
                 createMenuItem(menu,1,"isHeadimg","精简列表页头图","");
                 createMenuItem(menu,1,"displayLive","是否显示直播帖","");
                 createMenuItem(menu,1,"displaySign","是否显示用户签名档","");
+                createMenuItem(menu,1,"autoCloseGuide","自动收起指引","");
                 createMenuItem(menu,1,"homeProcess","个人主页精简","");
                 createMenuItem(menu,1,"groupprocess","群组页面精简","");
                 createMenuItem(menu,1,"nologin","免登录看帖","");
@@ -791,6 +799,7 @@
         menuInitialize_checkbox('reverse',reverse);
         menuInitialize_checkbox('displayLive',displayLive);
         menuInitialize_checkbox('displaySign',displaySign);
+        menuInitialize_checkbox('autoCloseGuide',autoCloseGuide);
         menuInitialize_input('sleepTime',sleepTime);
         menuInitialize_input('delayScriptRunTimes',delayScriptRunTimes);
         menuInitialize_input('sleepTimePage',sleepTimeWhenPageTurn);
@@ -851,6 +860,7 @@
         isHeadimg = convertBoolValue('isHeadimg');
         displayLive = convertBoolValue('displayLive');
         displaySign = convertBoolValue('displaySign');
+        autoCloseGuide = convertBoolValue('autoCloseGuide');
         groupPageProcess = convertBoolValue('groupprocess');
         noLoginProcess = convertBoolValue('nologin');
         reverse = convertBoolValue('reverse');
@@ -886,6 +896,7 @@
             GM_deleteValue("delayScriptRunTimes");
             GM_deleteValue("displayLive");
             GM_deleteValue("displaySign");
+            GM_deleteValue("autoCloseGuide");
             GM_deleteValue("sleepTimeWhenPageTurn");
             GM_deleteValue("reverseSleepTime");
             GM_deleteValue("homePageProcess");
@@ -942,6 +953,7 @@
         GM_setValue("delayScriptRunTimes",delayScriptRunTimes);
         GM_setValue("displayLive",displayLive);
         GM_setValue("displaySign",displaySign);
+        GM_setValue("autoCloseGuide",autoCloseGuide);
         GM_setValue("sleepTimeWhenPageTurn",sleepTimeWhenPageTurn);
         GM_setValue("reverseSleepTime",reverseSleepTime);
         GM_setValue("homePageProcess",homePageProcess);
@@ -1093,7 +1105,7 @@
                 rightbtn.addEventListener('click',reverse_click);
                 currenthref = window.location.href;
                 reverse_contents();
-            }            
+            }
         }
     }
     //倒序看帖点击事件
@@ -1160,6 +1172,19 @@
                 }
             }
         },reverseSleepTime);
+    }
+    //自动收起指引
+    var isAutoCloseGuideSet = false;
+    function closeGuide(){
+        if (autoCloseGuide && !isAutoCloseGuideSet){
+            var topContent = document.getElementsByClassName("top_content");
+            var topContentMain = document.getElementsByClassName("top_cont_main");
+            if (topContent.length>0 && topContentMain.length>0){
+                topContent[0].setAttribute("class","top_content top_content_closed");
+                topContentMain[0].setAttribute("style","display:none;");
+                isAutoCloseGuideSet = true;
+            }
+        }
     }
     //版本更新删除废弃变量
     function deleteTrashValue(){
