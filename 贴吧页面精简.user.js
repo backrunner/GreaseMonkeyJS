@@ -58,7 +58,7 @@
     var displaySign;
     var autoCloseGuide;
     //脚本固定开关
-    var isCtrlPanelOn = true;
+    var isCtrlPanelOn;
     //底部信息div
     var foot;
     var homePageMatch = RegExp("(http|https):\/\/tieba.baidu.com\/(#*$)|(http|https):\/\/tieba.baidu.com\/(index\.html#*$)");
@@ -262,6 +262,8 @@
         displayLive = initialize_var("displayLive",false);
         displaySign = initialize_var("displaySign",false);
         autoCloseGuide = initialize_var("autoCloseGuide",true);
+        //固定开关 *20180510
+        isCtrlPanelOn = initialize_var("isCtrlPanelOn",true);
     }
     function initialize_var(name,defaultSet){
         var obj = GM_getValue(name,defaultSet);
@@ -635,6 +637,7 @@
             console.error(e);
         }
     }
+
     //更新提醒
     function updateAlert(){
         var s_update = "贴吧页面精简 by BackRunner：\n检测到脚本版本更改\n\n";

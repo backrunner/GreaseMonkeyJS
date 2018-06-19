@@ -16,7 +16,7 @@ function changeFont(s_font,mode){
 				var element = document.createElement("link");
 				element.rel="stylesheet";
 				element.type="text/css";
-				element.href='data:text/css,*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not(i){font-family:' + s_font + ',Arial,stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie" !important;}';
+				element.href='data:text/css,*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not([class*="hwic"]):not(i){font-family:' + s_font + ',Arial,stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie" !important;}';
 				document.documentElement.appendChild(element);
 				break;
 			case 1:
@@ -28,7 +28,7 @@ function changeFont(s_font,mode){
 						modStyle.id = 'modCSS_font';
 						document.body.appendChild(modStyle);
 					}   
-					modStyle.innerHTML = '*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not(i){font-family:' + s_font + ',Arial,stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie" !important;';
+					modStyle.innerHTML = '*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not([class*="hwic"]):not(i){font-family:' + s_font + ',Arial,stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie" !important;';
 				},300);
 				break;
 			case 2:
