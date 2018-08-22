@@ -2,7 +2,7 @@
 // @name         绕过Unipus的插件检测
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
 // @version      1.1
-// @description  通过更改变量值来禁用Unipus的检测，适用于江西财经大学的
+// @description  通过更改变量值来禁用Unipus的检测
 // @author       BackRunner
 // @include      *://nhce*.edu*/login/*
 // @include      *://nhce*.edu*/book/*
