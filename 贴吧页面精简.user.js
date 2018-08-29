@@ -3,7 +3,7 @@
 // @namespace    https://greasyfork.org/zh-CN/scripts/23687
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
 // @contributionURL https://sinacloud.net/backrunner/img/alipay.jpg
-// @version      2.7.9
+// @version      2.7.10
 // @description  【可能是你遇到的最好用的贴吧精简脚本】，完全去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
 // @author       BackRunner
 // @include      *://tieba.baidu.com/*
@@ -28,6 +28,8 @@
 // 如果您觉得本脚本好用可以赞助我一点零花
 // donate@backrunner.top (支付宝)
 // === 更新日志 ===
+// 2018.08.29 - 2.7.10
+// 修了一些东西
 // 2018.05.10 - 2.7.9
 // 添加固定开关以绕过一些兼容问题
 // 2018.05.09 - 2.7.8
@@ -391,6 +393,8 @@
         cssText += '.tbui_fbar_down {display:none !important}';
         //nani
         cssText += '.nani_app_download_box {display:none !important;}';
+        //奇怪的对话框
+        cssText += '.dialogJmodal {display:none !important;}';
 
         //群组页面右侧下载
         if (groupPageProcess){
@@ -656,7 +660,7 @@
                 case "未知":
                     s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
-                case "2.7.9":
+                case "2.7.10":
                     s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";
                     break;
             }
@@ -994,7 +998,7 @@
                     foot.setAttribute('style','padding-top:0px !important;');
                     id.setAttribute('id','backrunnerJSFooter');
                     createFooterElement(foot,"已应用由BackRunner制作的贴吧精简脚本 ("+ GM_info.script.version+")","https://greasyfork.org/zh-CN/scripts/23687",false);
-                    createFooterElement(foot,"捐赠作者(支付宝二维码)","https://backrunner.top/img/alipay.jpg",true);
+                    createFooterElement(foot,"捐赠作者(支付宝二维码)","https://smallfile.backrunner.top/images/alipay.jpg",true);
                     footDiv.appendChild(foot);
                     footDiv.appendChild(id);
                     console.warn('贴吧页面精简 by BackRunner: 底部信息添加完成');
@@ -1012,7 +1016,7 @@
                         foot.setAttribute('style','padding-top:0px !important;');
                         id.setAttribute('id','backrunnerJSFooter');
                         createFooterElement(foot,"已应用由BackRunner制作的贴吧精简脚本 ("+ GM_info.script.version+")","https://greasyfork.org/zh-CN/scripts/23687",false);
-                        createFooterElement(foot,"向作者捐款(支付宝二维码)","http://backrunner.top/img/alipay.jpg",true);
+                        createFooterElement(foot,"向作者捐款(支付宝二维码)","https://smallfile.backrunner.top/images/alipay.jpg",true);
                         footDiv.appendChild(foot);
                         footDiv.appendChild(id);
                         console.warn('贴吧页面精简 by BackRunner: 底部信息添加完成');
@@ -1129,7 +1133,7 @@
             console.log('click');
             //恢复正序
             GM_setValue('reverse_status',false);
-            btns = document.getElementsByClassName('pb_list_pager')[0].children;
+            var btns = document.getElementsByClassName('pb_list_pager')[0].children;
             if (btns.length === 0){
                 window.location.reload(true);
             }else {
@@ -1181,7 +1185,7 @@
                 }
                 console.warn(contents);
                 //倒序
-                for(i = contents.length - 1; i >= 0; i--) {
+                for(var i = contents.length - 1; i >= 0; i--) {
                     list.appendChild(contents[i]);
                 }
             }
