@@ -1,8 +1,10 @@
 // ==UserScript==
 // @name         强制使用微软雅黑
+// @name:en      Force sites to use Microsoft Yahei
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
 // @version      2.0.1
 // @description  我就是喜欢微软雅黑！【解决显示方框问题】
+// @description:en Microsoft Yahei is my only love! [Fix square issues]
 // @author       BackRunner
 // @include      *
 // @exclude      *.seedr.cc*
