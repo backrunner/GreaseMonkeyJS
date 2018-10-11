@@ -3,10 +3,12 @@
 // @namespace    https://greasyfork.org/zh-CN/scripts/23687
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
 // @contributionURL https://sinacloud.net/backrunner/img/alipay.jpg
-// @version      2.7.10
+// @version      2.7.11
 // @description  【可能是你遇到的最好用的贴吧精简脚本】，完全去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
 // @author       BackRunner
 // @include      *://tieba.baidu.com/*
+// @include      *://dq.tieba.com/*
+// @include      *://jump2.bdimg.com/*
 // @exclude      *://tieba.baidu.com/f/fdir*
 // @run-at       document-body
 // @require      https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js
@@ -23,19 +25,14 @@
 // 使用TamperMonkey的用户可以将脚本的加载位置设置为document-start获得更好效果，若出现不生效等错误请还原设置
 // 请根据您的需要根据下面代码的注释选择需要隐藏的模块，有不想隐藏的模块可以注释掉那一行代码
 // 请根据您的需要与注释调整变量定义内的内容
+// 您自行修改的代码会在更新的时候被覆盖，建议您备份您修改的内容
 // 遇到问题请立即反馈
 // ==== Donate ====
 // 如果您觉得本脚本好用可以赞助我一点零花
 // donate@backrunner.top (支付宝)
 // === 更新日志 ===
-// 2018.08.29 - 2.7.10
-// 修了一些东西
-// 2018.05.10 - 2.7.9
-// 添加固定开关以绕过一些兼容问题
-// 2018.05.09 - 2.7.8
-// 添加自动收起指引功能，该功能默认开启。
-// 2018.05.04 - 2.7.7
-// 调整未登录状态下的主页布局
+// 2018.10.11 - 2.7.11
+// 根据反馈修复了一些东西
 // ================
 
 
@@ -238,6 +235,8 @@
             } catch(e){
                 console.error(e);
             }
+            //打折卡等弹框屏蔽
+            removePopupModal();
         });
         console.warn('贴吧页面精简 by BackRunner: 后处理脚本已跳过');
     }
@@ -393,8 +392,8 @@
         cssText += '.tbui_fbar_down {display:none !important}';
         //nani
         cssText += '.nani_app_download_box {display:none !important;}';
-        //奇怪的对话框
-        cssText += '.dialogJmodal {display:none !important;}';
+        //会员菜单
+        cssText += '.u_menu_member {display:none !important;}';
 
         //群组页面右侧下载
         if (groupPageProcess){
@@ -655,12 +654,12 @@
                 default:
                     //版本更新时删除废弃变量
                     deleteTrashValue();
-                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n添加固定开关以绕过一些兼容问题。\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
+                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n添加一些过滤。\n根据反馈对两个奇怪域名做了重定向。\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
                 case "未知":
                     s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
-                case "2.7.10":
+                case "2.7.11":
                     s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";
                     break;
             }
@@ -1086,6 +1085,13 @@
                 url = url.replace(elements[i],'');
             }
         }
+        //奇怪域名重定向
+        if (url.indexOf('dq.tieba.com')!=-1){
+            url = url.replace('dq.tieba.com','tieba.baidu.com');
+        }
+        if (url.indexOf('jump2.bdimg.com')!=-1){
+            url = url.replace('jump2.bdimg.com','tieba.baidu.com');
+        }
         if (url !== window.location.href){
             window.location = url;
         }
@@ -1211,5 +1217,14 @@
             GM_deleteValue("trashList[i]");
         }
         console.warn('贴吧页面精简 by BackRunner: 版本更新，已删除废弃变量');
+    }
+    //打折卡等弹框屏蔽
+    function removePopupModal(){
+        $('.dialogJ').remove();
+        $('.dialogJmodal').remove();
+        setTimeout(function(){
+            $('.dialogJ').remove();
+            $('.dialogJmodal').remove();
+        },500);
     }
 })();
