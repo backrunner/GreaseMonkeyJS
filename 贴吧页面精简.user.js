@@ -3,7 +3,7 @@
 // @namespace    https://greasyfork.org/zh-CN/scripts/23687
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
 // @contributionURL https://sinacloud.net/backrunner/img/alipay.jpg
-// @version      2.7.12
+// @version      2.7.12b
 // @description  【可能是你遇到的最好用的贴吧精简脚本】，完全去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
 // @author       BackRunner
 // @include      *://tieba.baidu.com/*
@@ -100,7 +100,7 @@
             try{
                 console.warn('贴吧页面精简 by BackRunner: 正在创建控制面板');
                 if(isCtrlPanelOn){
-                   createControlPanel();
+                    createControlPanel();
                 }
             } catch(e){
                 console.error(e);
@@ -132,7 +132,7 @@
                         console.warn('贴吧页面精简 by BackRunner: 当前位于群组页面，不执行群组页面惰性脚本');
                     } else {
                         if (homePageMatch.test(window.location.href)){
-                            bindCleadIndexADEvent();
+                            bindCleanIndexADEvent();
                         } else {
                             console.warn('贴吧页面精简 by BackRunner: 页面未适配延迟脚本');
                         }
@@ -179,7 +179,7 @@
                         reverseorder();
                     } else {
                         if (homePageMatch.test(window.location.href)){
-                            bindCleadIndexADEvent();
+                            bindCleanIndexADEvent();
                             cleanADinIndex();
                         }
                     }
@@ -678,7 +678,7 @@
                 case "未知":
                     s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
-                case "2.7.12":
+                case "2.7.12b":
                     s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";
                     break;
             }
@@ -1097,7 +1097,6 @@
         var url = window.location.href;
         //?red_tag重定向
         var elements = window.location.search.toString().split('&');
-        console.log(elements);
         for (var i = 0;i<elements.length;i++){
             if (elements[i].indexOf('red_tag') !== -1){
                 url = url.replace('&'+elements[i],'');
@@ -1261,22 +1260,64 @@
             }
         },5000);
     }
-    function bindCleadIndexADEvent(){
+    //清理首页动态内的广告 *20181022
+    var indexADEvent_a = false;
+    var indexADEvent_scroll = false;
+    var indexADEvent_tag_hot = false;
+    var indexADEvent_tag_personal = false;
+    var windowTempScrollTop = 0;
+    function bindCleanIndexADEvent(){
         var btn = document.getElementById('btn_more');
         var a = btn.children[0];
-        a.addEventListener('click',function(){
-            setTimeout(function(){
-                cleanADinIndex();
-            },sleepTime);
-        });
+        if (!indexADEvent_a){
+            console.log("贴吧页面精简 by BackRunner: 已绑定首页动态广告清理的按钮点击事件");
+            a.addEventListener('click',function(){
+                setTimeout(function(){
+                    cleanADinIndex();
+                },sleepTime);
+            });
+            indexADEvent_a = true;
+        }
+        if (!indexADEvent_scroll){
+            console.log("贴吧页面精简 by BackRunner: 已绑定首页动态广告清理的滚动事件");
+            document.onscroll = function(){
+                if (document.documentElement.scrollTop - windowTempScrollTop > 300){
+                    console.log("贴吧页面精简 by BackRunner: 滚动触发，正在清理动态内的广告");
+                    cleanADinIndex();
+                    windowTempScrollTop = document.documentElement.scrollTop;
+                }
+            }
+            indexADEvent_scroll = true;
+        }
+        if (!indexADEvent_tag_hot){
+            var tag_hot = document.getElementById('j_remen_nav');
+            tag_hot.addEventListener('click',function(){
+                clearScrollTopTemp();
+            });
+            indexADEvent_tag_hot = true;
+        }
+        if (!indexADEvent_tag_personal){
+            var tag_personal = document.getElementById('nav-personal');
+            tag_personal.addEventListener('click',function(){
+                clearScrollTopTemp();
+            });
+            indexADEvent_tag_hot = true;
+        }
+    }
+    function clearScrollTopTemp(){
+        console.log("贴吧页面精简 by BackRunner: 清理滚动高度缓存");
+        windowTempScrollTop = 0;
     }
     function cleanADinIndex(){
         var ads = document.getElementsByClassName('home-place-item');
+        var count = 0;
         for (var i = 0;i<ads.length;i++){
             var extinfo = ads[i].getAttribute('data-ext_info');
             if (typeof extinfo != 'undefined'){
                 ads[i].parentNode.removeChild(ads[i]);
-            }
+                count++;
+            };
         }
+        console.log("贴吧页面精简 by BackRunner: 清理了"+count+"条动态内的广告");
     }
 })();
