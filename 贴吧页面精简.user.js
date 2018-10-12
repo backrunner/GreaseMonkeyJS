@@ -3,7 +3,7 @@
 // @namespace    https://greasyfork.org/zh-CN/scripts/23687
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
 // @contributionURL https://sinacloud.net/backrunner/img/alipay.jpg
-// @version      2.7.11
+// @version      2.7.12
 // @description  【可能是你遇到的最好用的贴吧精简脚本】，完全去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
 // @author       BackRunner
 // @include      *://tieba.baidu.com/*
@@ -31,6 +31,9 @@
 // 如果您觉得本脚本好用可以赞助我一点零花
 // donate@backrunner.top (支付宝)
 // === 更新日志 ===
+// 2018.10.12 - 2.7.12
+// 添加首页去广告
+// 修复了一些问题
 // 2018.10.11 - 2.7.11
 // 根据反馈修复了一些东西
 // ================
@@ -129,7 +132,7 @@
                         console.warn('贴吧页面精简 by BackRunner: 当前位于群组页面，不执行群组页面惰性脚本');
                     } else {
                         if (homePageMatch.test(window.location.href)){
-                            console.warn('贴吧页面精简 by BackRunner: 当前位于主页，不执行主页相关惰性脚本');
+                            bindCleadIndexADEvent();
                         } else {
                             console.warn('贴吧页面精简 by BackRunner: 页面未适配延迟脚本');
                         }
@@ -168,18 +171,20 @@
                     disableForumCard();
                     //自动收起指引 *20180509
                     closeGuide();
-                    reStart();
                 } else {
                     if (window.location.href.indexOf("tieba.baidu.com/p/") != -1){
                         addListenerToPage();
                         tpointADClean();
                         adinPageClean();
                         reverseorder();
-                        reStart();
                     } else {
-                        reStart();
+                        if (homePageMatch.test(window.location.href)){
+                            bindCleadIndexADEvent();
+                            cleanADinIndex();
+                        }
                     }
                 }
+                reStart();
                 function reStart(){
                     n++;
                     if (n>delayScriptRunTimes-1){
@@ -394,6 +399,8 @@
         cssText += '.nani_app_download_box {display:none !important;}';
         //会员菜单
         cssText += '.u_menu_member {display:none !important;}';
+        //菜单 *20181012
+        cssText += '.u_mytbmall,.u_game,.u_blue{display:none !important;}';
 
         //群组页面右侧下载
         if (groupPageProcess){
@@ -435,6 +442,8 @@
                 cssText += '.aggregate_entrance_wrap {display:none !important;}';
                 //未登录时的滚动横幅 *20180504
                 cssText += '#rec_left {display:none !important;} #rec_right{float:right;position:absolute;right:30px;margin-top:15px;}';
+                //用户面板的一些图表等 *20181012
+                cssText += '.icon_tbworld {display:none !important;} .user_score{display:none !important;}';
             }
         }
 
@@ -608,6 +617,16 @@
             }
         }
         console.log('贴吧页面精简 by BackRunner: 扫描列表精简其他广告');
+        //清理无用tab *20181012
+        var tabs = document.getElementsByClassName("j_tbnav_tab_a");
+        for (i=0;i<tabs.length;i++){
+            if (tabs[i].innerHTML.indexOf("直播") != -1){
+                tabs[i].parentNode.removeChild(tabs[i]);
+            }
+            if (tabs[i].innerHTML.indexOf("应用") != -1){
+                tabs[i].parentNode.removeChild(tabs[i]);
+            }
+        }
     }
 
     //贴内广告
@@ -622,7 +641,7 @@
         //贴内插入广告
         var plus = document.getElementsByClassName('d_name');
         for (i=0;i<plus.length;i++){
-            dat = plus[i].getAttribute('data-field');
+            var dat = plus[i].getAttribute('data-field');
             if(!dat || !dat.replace(/\s/g,'')){
                 plus[i].parentNode.parentNode.parentNode.parentNode.removeChild(plus[i].parentNode.parentNode.parentNode);
             }
@@ -654,12 +673,12 @@
                 default:
                     //版本更新时删除废弃变量
                     deleteTrashValue();
-                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n添加一些过滤。\n根据反馈对两个奇怪域名做了重定向。\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
+                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n添加主页广告的去除。\n修复了一些问题。\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
                 case "未知":
                     s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
-                case "2.7.11":
+                case "2.7.12":
                     s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";
                     break;
             }
@@ -1092,6 +1111,9 @@
         if (url.indexOf('jump2.bdimg.com')!=-1){
             url = url.replace('jump2.bdimg.com','tieba.baidu.com');
         }
+        if (url.indexOf('?traceid=')!=-1){
+            url = url.replace('?traceid=','');
+        }
         if (url !== window.location.href){
             window.location = url;
         }
@@ -1220,11 +1242,41 @@
     }
     //打折卡等弹框屏蔽
     function removePopupModal(){
-        $('.dialogJ').remove();
-        $('.dialogJmodal').remove();
+        var dialog = document.getElementsByClassName('dialogJ');
+        var dialogmodal = document.getElementsByClassName('dialogJmodal');
+        for (var i = 0;i<dialog.length;i++){
+            dialog[i].parentNode.removeChild(dialog[i]);
+        }
+        for (i = 0;i<dialogmodal.length;i++){
+            dialogmodal[i].parentNode.removeChild(dialogmodal[i]);
+        }
         setTimeout(function(){
-            $('.dialogJ').remove();
-            $('.dialogJmodal').remove();
-        },500);
+            var dialog = document.getElementsByClassName('dialogJ');
+            var dialogmodal = document.getElementsByClassName('dialogJmodal');
+            for (var i = 0;i<dialog.length;i++){
+                dialog[i].parentNode.removeChild(dialog[i]);
+            }
+            for (i = 0;i<dialogmodal.length;i++){
+                dialogmodal[i].parentNode.removeChild(dialogmodal[i]);
+            }
+        },5000);
+    }
+    function bindCleadIndexADEvent(){
+        var btn = document.getElementById('btn_more');
+        var a = btn.children[0];
+        a.addEventListener('click',function(){
+            setTimeout(function(){
+                cleanADinIndex();
+            },sleepTime);
+        });
+    }
+    function cleanADinIndex(){
+        var ads = document.getElementsByClassName('home-place-item');
+        for (var i = 0;i<ads.length;i++){
+            var extinfo = ads[i].getAttribute('data-ext_info');
+            if (typeof extinfo != 'undefined'){
+                ads[i].parentNode.removeChild(ads[i]);
+            }
+        }
     }
 })();
