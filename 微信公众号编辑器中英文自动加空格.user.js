@@ -19,12 +19,12 @@
 	setTimeout(function(){
 		getToolbar();
 		createBtn();
-	},1000);
+	},2000);
 
 
 	//Functions
 	function getToolbar(){
-		toolbar = document.getElementsByClassName('edui-toolbar-primary');
+		toolbar = document.getElementById('js_toolbar_0');
 	}
 	function createBtn(){
         var wrap = document.createElement("div");
@@ -37,7 +37,7 @@
 		btn_name.innerHTML = "添加空格";
         wrap.appendChild(div);
 		div.appendChild(btn_name);
-		toolbar[0].appendChild(wrap);
+		toolbar.appendChild(wrap);
 		div.addEventListener('click',Event);
 	}
 	function Event(){
@@ -58,7 +58,7 @@
 			var p7 = /([\u4e00-\u9fa5]+)([<])([a])/gi;//汉字 括号
 			var p8 = /([a])([>])([\u4e00-\u9fa5]+)/gi;//括号 汉字
             var p9 = /([A-Za-z_])([0-9_])([\u4e00-\u9fa5]+)/gi;//英文+数字 汉字
-			s = s.replace(p9,'$1 $2 $3').replace(p1, '$1 $2').replace(p2, "$1 $2").replace(p3, "$1 $2").replace(p4, "$1 $2").replace(p5,"$1$2 $3").replace(p6,"$1 $2$3").replace(p11,"$1 $2$3").replace(p10,"$1$2 $3").replace(p7,"$1 $2$3").replace(p8,"$1$2 $3");
+			s = s.replace(p9,'$1$2 $3').replace(p1, '$1 $2').replace(p2, "$1 $2").replace(p3, "$1 $2").replace(p4, "$1 $2").replace(p5,"$1$2 $3").replace(p6,"$1 $2$3").replace(p11,"$1 $2$3").replace(p10,"$1$2 $3").replace(p7,"$1 $2$3").replace(p8,"$1$2 $3");
 			plist[i].innerHTML = s;
 			//console.log(s);
 		}

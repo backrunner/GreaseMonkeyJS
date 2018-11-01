@@ -19,12 +19,12 @@
 	setTimeout(function(){
 		getToolbar();
 		createBtn();
-	},1000);
+	},2000);
 
 
 	//Functions
 	function getToolbar(){
-		toolbar = document.getElementsByClassName('edui-toolbar-primary');
+		toolbar = document.getElementById('js_toolbar_0');
 	}
 	function createBtn(){
         var wrap = document.createElement("div");
@@ -37,7 +37,7 @@
 		btn_name.innerHTML = "替换引号";
         wrap.appendChild(div);
 		div.appendChild(btn_name);
-		toolbar[0].appendChild(wrap);
+		toolbar.appendChild(wrap);
 		div.addEventListener('click',Event);
 	}
 	function Event(){
