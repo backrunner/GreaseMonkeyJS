@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         微信公众号编辑器中英文自动加空格
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      1.4
+// @version      1.5
 // @description  在微信公众号编辑器中加入一个用于自动在中英文间添加空格的按钮
 // @author       BackRunner
-// @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit&action=edit*
-// @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit_v2&action=edit*
+// @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit*
+// @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit_v2*
 // @license      MIT
 // @run-at       document-end
 // @grant        unsafeWindow
@@ -14,18 +14,34 @@
 (function() {
 	//Set
 	var toolbar;
-	
-	//Run	
-	setTimeout(function(){
-		getToolbar();
-		createBtn();
-	},2000);
-
+	var count = 0;
+    var retry = 0;
+	//Run
+    $(document).ready(function(){
+        setTimeout(function(){
+            getToolbar();
+        },5000);
+    });
 
 	//Functions
 	function getToolbar(){
 		toolbar = document.getElementById('js_toolbar_0');
+        while (typeof toolbar == 'undefined' && count < 10){
+            count++;
+            toolbar = document.getElementById('js_toolbar_0');
+        }
+        if (count < 3){
+            createBtn();
+        } else {
+            if (retry < 3){
+                setTimeout(function(){
+                    getToolbar();
+                    retry++;
+                },3000);
+            }
+        }
 	}
+
 	function createBtn(){
         var wrap = document.createElement("div");
         wrap.setAttribute("class","edui-box edui-splitbutton edui-default");

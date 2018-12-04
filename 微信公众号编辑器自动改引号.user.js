@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         微信公众号编辑器自动改引号
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      1.0
+// @version      1.1
 // @description  在微信公众号编辑器中加入一个用于自动改引号的按钮
 // @author       BackRunner
-// @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit&action=edit*
-// @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit_v2&action=edit*
+// @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit*
+// @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit_v2*
 // @license      MIT
 // @run-at       document-end
 // @grant        unsafeWindow
@@ -15,17 +15,34 @@
 	//Set
 	var toolbar;
 
+	var count = 0;
+    var retry = 0;
 	//Run
-	setTimeout(function(){
-		getToolbar();
-		createBtn();
-	},2000);
-
+    $(document).ready(function(){
+        setTimeout(function(){
+            getToolbar();
+        },5000);
+    });
 
 	//Functions
 	function getToolbar(){
 		toolbar = document.getElementById('js_toolbar_0');
+        while (typeof toolbar == 'undefined' && count < 10){
+            count++;
+            toolbar = document.getElementById('js_toolbar_0');
+        }
+        if (count < 3){
+            createBtn();
+        } else {
+            if (retry < 3){
+                setTimeout(function(){
+                    getToolbar();
+                    retry++;
+                },3000);
+            }
+        }
 	}
+
 	function createBtn(){
         var wrap = document.createElement("div");
         wrap.setAttribute("class","edui-box edui-splitbutton edui-default");
@@ -40,6 +57,7 @@
 		toolbar.appendChild(wrap);
 		div.addEventListener('click',Event);
 	}
+
 	function Event(){
 		var iframe = document.getElementById("ueditor_0");
 		var plist = iframe.contentDocument.getElementsByTagName("p");
