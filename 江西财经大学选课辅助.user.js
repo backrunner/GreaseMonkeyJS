@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         江西财经大学选课辅助
-// @version      2.0
+// @version      2.1
 // @description  还在烦恼选课慢？
 // @author       BackRunner
 // @include      *://*/lightSelectSubject/
@@ -14,6 +14,10 @@
 
 (function() {
     console.log('快速选课脚本启动......  Developed by BackRunner');
+
+    window.Tesseract = Tesseract.create({
+        langPath: 'https://smallfile.backrunner.top/files/'
+    });
 
     if (window.location.href.indexOf('xk.jxufe.edu.cn') != -1){
         $('#main').append('<div style="width:100%;display:block;"><div id="backrunner" style="border:solid 1px black;width:290px;height:auto;margin:0 auto;text-align:center;display:block;"><div style="display:flex;"><span style="display:inline-block;margin-top:20px;padding-left:12px;">学号</span><input class="brinput" id="brinput-no" style="display:inline-block;width:190px;padding:10px 12px;margin:10px 15px;"/></div><div style="display:flex;"><span style="display:inline-block;margin-top:20px;padding-left:12px;">密码</span><input class="brinput" id="brinput-pwd" type="password" style="display:inline-block;width:190px;padding:10px 12px;margin:10px 15px;"/></div><div><button class="brbtn" id="brbtn-saveinfo" style="width:90%;padding:10px 12px; margin:10px;">保存</button><span style="width:100%;font-size:10px;line-height:28px;display:block">选课辅助 by BackRunner with 江财网安</span></div>');
@@ -86,7 +90,6 @@
                     //console.log(base64data);
                     var codeImg = document.getElementById('loginImg');
                     codeImg.src = base64data;
-
                     Tesseract.recognize(base64data, {
                         tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
                     })
@@ -107,7 +110,7 @@
                     if (originalRequest.responseText=="")//如果没有满的话，则显示验证码
                     {
                         var img = document.createElement('img');
-                        img.src = 'loginSign.jsp';  //此处自己替换本地图片的地址
+                        img.src = 'loginSign.jsp';
                         img.onload =function() {
                             var base64data = getBase64Image(img);
                             //console.log(base64data);
@@ -122,12 +125,12 @@
                             Tesseract.recognize(base64data, {
                                 tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
                             })
-                            //.progress(message => console.log(message))
+                                .progress(message => console.log(message))
                                 .catch(err => console.error(err))
                                 .then(result => {
-                                console.log(result)
-                                $('#signImg').val(result.text.replace(/\n/g,"").replace(/ /g,"").toUpperCase());
-                            })
+                                    console.log(result);
+                                    $('#signImg').val(result.text.replace(/\n/g,"").replace(/ /g,"").toUpperCase());
+                                })
                                 .finally(resultOrError => console.log(resultOrError));
                         }
                         //document.getElementById('authImg').innerHTML="<img id='loginImg' src='loginSign.jsp' border=0 onclick='javascript:changeImage_moded()'>";
@@ -169,7 +172,7 @@
             var usn = GM_getValue('username',"");
             var pwd = GM_getValue('password',"");
 
-            document.body.innerHTML += '<div style="width:100%;display:block;"><div id="backrunner" style="border:solid 1px black;width:250px;height:auto;margin:0 auto;text-align:center;display:block;"><button class="brbtn" id="brbtn-getcode" style="display:block;width:220px;padding:10px 12px;margin:10px 15px;">快速获得验证码</button><button class="brbtn" id="brbtn-entry" style="display:block;width:220px;padding:8px 12px;margin:10px 15px;">速进</button><span style="width:100%;font-size:10px;line-height:28px;display:block">选课辅助 by BackRunner with 江财网安</span></div></div>';
+            document.body.innerHTML += '<div style="width:100%;display:block;"><div id="backrunner" style="border:solid 1px black;width:250px;height:auto;margin:0 auto;text-align:center;display:block;"><button class="brbtn" id="brbtn-getcode" style="display:block;width:220px;padding:10px 12px;margin:10px 15px;">快速获取验证码</button><button class="brbtn" id="brbtn-entry" style="display:block;width:220px;padding:8px 12px;margin:10px 15px;">速进</button><span style="width:100%;font-size:10px;line-height:28px;display:block">选课辅助 by BackRunner with 江财网安</span></div></div>';
             $('#brbtn-getcode').click(function(){
                 getCode();
             });
