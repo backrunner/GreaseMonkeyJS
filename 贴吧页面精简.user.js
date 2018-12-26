@@ -2,7 +2,7 @@
 // @name         贴吧页面精简
 // @namespace    https://greasyfork.org/zh-CN/scripts/23687
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      2.7.14
+// @version      2.7.15
 // @description  【可能是你遇到的最好用的贴吧精简脚本】，完全去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
 // @author       BackRunner
 // @include      *://tieba.baidu.com/*
@@ -31,6 +31,8 @@
 // 如果您觉得本脚本好用可以赞助我一点零花
 // donate@backrunner.top (支付宝)
 // === 更新日志 ===
+// 2018.12.26 - 2.7.15
+// 修复Chrome新版本上的兼容问题。
 // 2018.10.21 - 2.7.14
 // 添加一个域名重定向规则
 // 2018.10.13 - 2.7.13
@@ -493,24 +495,21 @@
 
         console.log('贴吧页面精简 by BackRunner: css创建完成');
 
-        if (navigator.userAgent.indexOf('Chrome') > -1){
-            var element = document.createElement('link');
-            element.rel="stylesheet";
-            element.type="text/css";
-            element.href='data:text/css,'+cssText;
-            document.documentElement.appendChild(element);
-        } else {
-            if (navigator.userAgent.indexOf('Firefox') > -1){
-                var modStyle = document.querySelector('#modCSS');
-                if (modStyle === null){
-                    modStyle = document.createElement('style');
-                    modStyle.id = 'modCSS';
-                    document.body.appendChild(modStyle);
-                    modStyle.innerHTML = cssText;
-                }
-            }
-            console.log('贴吧页面精简 by BackRunner: css已添加');
+        var element = document.createElement('link');
+        element.rel="stylesheet";
+        element.type="text/css";
+        element.href='data:text/css,'+cssText;
+
+        document.documentElement.appendChild(element);
+
+        var modStyle = document.querySelector('#modCSS');
+        if (modStyle === null){
+            modStyle = document.createElement('style');
+            modStyle.id = 'modCSS';
+            document.body.appendChild(modStyle);
+            modStyle.innerHTML = cssText;
         }
+        console.log('贴吧页面精简 by BackRunner: css已添加');
     }
     //列表翻页监听
     function addListenerToList(){
@@ -675,12 +674,12 @@
                 default:
                     //版本更新时删除废弃变量
                     deleteTrashValue();
-                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n添加一个域名重定向规则。\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
+                    s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n修复对新版Chrome的兼容性问题。\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
                 case "未知":
                     s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
-                case "2.7.14":
+                case "2.7.15":
                     s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";
                     break;
             }
