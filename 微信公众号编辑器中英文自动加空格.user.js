@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         微信公众号编辑器中英文自动加空格
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      1.5
+// @version      1.2019
 // @description  在微信公众号编辑器中加入一个用于自动在中英文间添加空格的按钮
 // @author       BackRunner
 // @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit*
@@ -53,6 +53,12 @@
 		btn_name.innerHTML = "添加空格";
         wrap.appendChild(div);
 		div.appendChild(btn_name);
+        var breakdiv = document.getElementById("br-breakdiv");
+        if (typeof breakdiv == 'undefined' || breakdiv == null){
+            breakdiv = document.createElement("div");
+            breakdiv.setAttribute("id","br-breakdiv");
+            toolbar.appendChild(breakdiv);
+        }
 		toolbar.appendChild(wrap);
 		div.addEventListener('click',Event);
 	}

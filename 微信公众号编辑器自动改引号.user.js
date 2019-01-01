@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         微信公众号编辑器自动改引号
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      1.1
+// @version      1.2019
 // @description  在微信公众号编辑器中加入一个用于自动改引号的按钮
 // @author       BackRunner
 // @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit*
@@ -54,6 +54,13 @@
 		btn_name.innerHTML = "替换引号";
         wrap.appendChild(div);
 		div.appendChild(btn_name);
+        var breakdiv = document.getElementById("br-breakdiv");
+        console.log(breakdiv);
+        if (typeof breakdiv == 'undefined' || breakdiv == null){
+            breakdiv = document.createElement("div");
+            breakdiv.setAttribute("id","br-breakdiv");
+            toolbar.appendChild(breakdiv);
+        }
 		toolbar.appendChild(wrap);
 		div.addEventListener('click',Event);
 	}
