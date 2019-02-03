@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         强制使用字体 - 核心
 // @namespace    http://tampermonkey.net/
-// @version      1.6
+// @version      1.7a
 // @description  所有 强制使用字体 脚本的核心脚本
 // @author       BackRunner
 // @include      *
@@ -16,7 +16,7 @@ function changeFont(s_font,mode){
 				var element = document.createElement("link");
 				element.rel="stylesheet";
 				element.type="text/css";
-				element.href='data:text/css,*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not([class*="hwic"]):not([class*="code"]):not(i){font-family:' + s_font + ',Arial,"Material Icons Extended",stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie",sans-serif !important;}[class*="code"]{font-family: Consolas !important}';
+				element.href='data:text/css,*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not([class*="hwic"]):not([class*="code"]):not(i){font-family:' + s_font + ',Arial,"Material Icons Extended",stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie",myfont,sans-serif !important;}[class*="code"]{font-family: Consolas !important}';
 				document.documentElement.appendChild(element);
 				break;
 			case 1:
@@ -28,14 +28,14 @@ function changeFont(s_font,mode){
 						modStyle.id = 'modCSS_font';
 						document.body.appendChild(modStyle);
 					}   
-					modStyle.innerHTML = '*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not([class*="hwic"]):not([class*="code"]):not(i){font-family:' + s_font + ',Arial,"Material Icons Extended",stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie",sans-serif !important;}[class*="code"]{font-family: Consolas !important}';
+					modStyle.innerHTML = '*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not([class*="hwic"]):not([class*="code"]):not(i){font-family:' + s_font + ',Arial,"Material Icons Extended",stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie",myfont,sans-serif !important;}[class*="code"]{font-family: Consolas !important}';
 				},300);
 				break;
 			case 2:
 				var element = document.createElement("link");
 				element.rel="stylesheet";
 				element.type="text/css";
-				element.href='data:text/css,*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not([class*="hwic"]):not([class*="code"]):not(i){font-family:' + s_font + ',Arial,"Material Icons Extended",stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie",sans-serif !important;}[class*="code"]{font-family: Consolas !important}';
+				element.href='data:text/css,*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not([class*="hwic"]):not([class*="code"]):not(i){font-family:' + s_font + ',Arial,"Material Icons Extended",stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie",myfont,sans-serif !important;}[class*="code"]{font-family: Consolas !important}';
 				document.documentElement.appendChild(element);
 				setTimeout(function(){
 					var modStyle = document.querySelector('#modCSS_font');
@@ -45,7 +45,7 @@ function changeFont(s_font,mode){
 						modStyle.id = 'modCSS_font';
 						document.body.appendChild(modStyle);
 					}   
-					modStyle.innerHTML = '*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not([class*="code"]):not(i){font-family:' + s_font + ',Arial,"Material Icons Extended",stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie" !important;}[class*="code"]{font-family: Consolas !important}';
+					modStyle.innerHTML = '*:not([class*="icon"]):not([class*="fa"]):not([class*="logo"]):not([class*="mi"]):not([class*="code"]):not(i){font-family:' + s_font + ',Arial,"Material Icons Extended",stonefont,iknow-qb_share_icons,review-iconfont,mui-act-font,fontAwesome,tm-detail-font,office365icons,MWF-MDL2,global-iconfont,"Bowtie",myfont !important;}[class*="code"]{font-family: Consolas !important}';
 				},300);
 				break;
 			case 3:
