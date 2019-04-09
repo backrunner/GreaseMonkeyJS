@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         对AdBlock友好的知乎
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      1.0
+// @version      1.1
 // @description  和知乎的启用了Adblock的提示说再见
 // @author       BackRunner
-// @include      *://www.zhihu.com*
+// @include      *://*.zhihu.com*
 // @run-at       document-body
 // ==/UserScript==
 
