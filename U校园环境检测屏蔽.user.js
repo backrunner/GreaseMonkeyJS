@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         U校园环境检测屏蔽
 // @namespace    https://github.com/backrunner/GreaseMonkeyJS
-// @version      1.1
+// @version      1.2
 // @description  屏蔽U校园的环境检测
 // @author       BackRunner
 // @include      *://u.unipus.cn/user/student?*
@@ -26,4 +26,5 @@
 		}
 		modStyle.innerHTML = cssText;
 	}
+    addCSS();
 })();
