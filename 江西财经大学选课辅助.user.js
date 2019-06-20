@@ -1,23 +1,30 @@
 // ==UserScript==
 // @name         江西财经大学选课辅助
-// @version      2.1
+// @version      2.2
 // @description  还在烦恼选课慢？
 // @author       BackRunner
 // @include      *://*/lightSelectSubject/
 // @include      *://*/lightSelectSubject/login.htm
-// @include      *://xk.jxufe.edu.cn/
+// @include      *://xk.jxufe.edu.cn*
 // @require      https://code.jquery.com/jquery-1.12.4.min.js
-// @require      https://cdn.jsdelivr.net/gh/naptha/tesseract.js@v1.0.14/dist/tesseract.min.js
+// @require      https://unpkg.com/tesseract.js@v2.0.0-alpha.10/dist/tesseract.min.js
 // @grant    GM_getValue
 // @grant    GM_setValue
 // ==/UserScript==
 
 (function() {
-    console.log('快速选课脚本启动......  Developed by BackRunner');
 
-    window.Tesseract = Tesseract.create({
-        langPath: 'https://smallfile.backrunner.top/files/'
+    /*if (window.location.protocol == 'https:'){
+        console.log('https:不是正确的选课页面，跳转中……');
+        window.location.href='http://xk.jxufe.edu.cn:80/';
+    }*/
+
+    const TesseractWorker = new Tesseract.TesseractWorker({
+        langPath: 'https://smallfile.backrunner.top/ocr/'
     });
+
+    TesseractWorker.recognize('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAzUlEQVQ4jWM8c+bMfwYqAyZqGzhqKAMLPslPRyczlC66giHuWjqTIUSFTEMhQIchrjOXwVoAyaLudAYGPAaT7H0+ay8GVyD9/OUnnGpID9MPLxieE1BCsqF39y1iuKIdxxBvzYdTDRFheoVhUXk6wyI4HxTG1gy4jSQjohjurGFIB1pyLq6bIReHa0kPU5UQhu44HYYri3Yx3MWhhILE/5zhxQcqGvr6JShDSDJICGCXJ91QYJh27QSGdJwbgzIOJWTEPuFsyjhaSFMdAADqaDyuZHNGmAAAAABJRU5ErkJggg==')
+         .finally(resultOrError => console.log(resultOrError));
 
     if (window.location.href.indexOf('xk.jxufe.edu.cn') != -1){
         $('#main').append('<div style="width:100%;display:block;"><div id="backrunner" style="border:solid 1px black;width:290px;height:auto;margin:0 auto;text-align:center;display:block;"><div style="display:flex;"><span style="display:inline-block;margin-top:20px;padding-left:12px;">学号</span><input class="brinput" id="brinput-no" style="display:inline-block;width:190px;padding:10px 12px;margin:10px 15px;"/></div><div style="display:flex;"><span style="display:inline-block;margin-top:20px;padding-left:12px;">密码</span><input class="brinput" id="brinput-pwd" type="password" style="display:inline-block;width:190px;padding:10px 12px;margin:10px 15px;"/></div><div><button class="brbtn" id="brbtn-saveinfo" style="width:90%;padding:10px 12px; margin:10px;">保存</button><span style="width:100%;font-size:10px;line-height:28px;display:block">选课辅助 by BackRunner with 江财网安</span></div>');
@@ -46,6 +53,8 @@
     setTimeout(function(){
         checkTitle();
     },100);
+
+    console.log('\n\n\n%c江西财经大学选课辅助脚本 %cver '+GM.info.script.version+'\n%cDeveloped by BackRunner\n%cwith 江西财经大学网络安全协会\n\n唯一安装源: https://io.backrunner.top/2018/12/25/%E6%B1%9F%E8%A5%BF%E8%B4%A2%E7%BB%8F%E5%A4%A7%E5%AD%A6%E9%80%89%E8%AF%BE%E8%BE%85%E5%8A%A9%E8%84%9A%E6%9C%AC.html\n\n\n','color: #1faeff;font-size: 16px;','color:#8f8f8f;font-size: 12px','color: #1faeff;','color: #8f8f8f;');
 
     //lazy execute
     $(document).ready(function(){
@@ -90,7 +99,7 @@
                     //console.log(base64data);
                     var codeImg = document.getElementById('loginImg');
                     codeImg.src = base64data;
-                    Tesseract.recognize(base64data, {
+                    TesseractWorker.recognize(base64data, {
                         tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
                     })
                     //.progress(message => console.log(message))
@@ -122,7 +131,7 @@
                             codeImg.src = base64data;
                             document.getElementById('authImg').appendChild(codeImg);
 
-                            Tesseract.recognize(base64data, {
+                            TesseractWorker.recognize(base64data, {
                                 tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
                             })
                                 .progress(message => console.log(message))

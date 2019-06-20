@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         U校园环境检测屏蔽
 // @namespace    https://github.com/backrunner/GreaseMonkeyJS
-// @version      1.2
+// @version      1.3
 // @description  屏蔽U校园的环境检测
 // @author       BackRunner
 // @include      *://u.unipus.cn/user/student?*
@@ -15,7 +15,8 @@
 		//变量定义
         var cssText = "";
 
-        cssText += "#layui-layer-shade1{display: none !important;}";
+        cssText += "#layui-layer-shade1 {display: none !important;}";
+        cssText += "#layui-layer1 {display: none !important;}"
 
 		var modStyle = document.querySelector('#modCSS');
 		if (modStyle === null)
