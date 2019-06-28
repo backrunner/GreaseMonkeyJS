@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         江西财经大学选课辅助
-// @version      2.4
+// @version      2.6
 // @description  还在烦恼选课慢？
 // @author       BackRunner
 // @include      *://*/lightSelectSubject/
 // @include      *://*/lightSelectSubject/login.htm
 // @include      *://xk.jxufe.edu.cn*
-// @require      https://code.jquery.com/jquery-1.12.4.min.js
-// @require      https://unpkg.com/tesseract.js@v2.0.0-alpha.10/dist/tesseract.min.js
-// @grant    GM_getValue
-// @grant    GM_setValue
+// @require      http://static.backrunner.top/jquery/1.12.4/jquery-1.12.4.min.js
+// @require      http://static.backrunner.top/tesseract/2.0.0-alpha.10/tesseract.min.js
+// @grant        GM_getValue
+// @grant        GM_setValue
 // ==/UserScript==
 
 (function() {
@@ -20,7 +20,9 @@
     }
 
     const TesseractWorker = new Tesseract.TesseractWorker({
-        langPath: 'https://smallfile.backrunner.top/ocr/'
+        langPath: 'http://static.backrunner.top/tessdata/4.0.0',
+        corePath: 'http://static.backrunner.top/tesseract-core/2.0.0-beta.10/tesseract-core.wasm.js',
+        workerPath: 'http://static.backrunner.top/tesseract/2.0.0-alpha.10/worker.min.js'
     });
 
     console.log('\n\n\n%c江西财经大学选课辅助脚本 %cver '+GM.info.script.version+'\n%cDeveloped by BackRunner\n%cwith 江西财经大学网络安全协会\n\n唯一安装源: https://io.backrunner.top/2018/12/25/%E6%B1%9F%E8%A5%BF%E8%B4%A2%E7%BB%8F%E5%A4%A7%E5%AD%A6%E9%80%89%E8%AF%BE%E8%BE%85%E5%8A%A9%E8%84%9A%E6%9C%AC.html\n\n\n','color: #1faeff;font-size: 16px;','color:#8f8f8f;font-size: 12px','color: #1faeff;','color: #8f8f8f;');
@@ -39,11 +41,15 @@
             alert("选课辅助：\n信息保存成功，页面即将刷新。");
             window.location.href = window.location.href;
         });
+        //ocr test
+        TesseractWorker.recognize('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAzUlEQVQ4jWM8c+bMfwYqAyZqGzhqKAMLPslPRyczlC66giHuWjqTIUSFTEMhQIchrjOXwVoAyaLudAYGPAaT7H0+ay8GVyD9/OUnnGpID9MPLxieE1BCsqF39y1iuKIdxxBvzYdTDRFheoVhUXk6wyI4HxTG1gy4jSQjohjurGFIB1pyLq6bIReHa0kPU5UQhu44HYYri3Yx3MWhhILE/5zhxQcqGvr6JShDSDJICGCXJ91QYJh27QSGdJwbgzIOJWTEPuFsyjhaSFMdAADqaDyuZHNGmAAAAABJRU5ErkJggg==')
+            .progress(function(message){console.log('progress is: ', message)})
+            .finally(resultOrError => console.log(resultOrError));
         return;
     }
 
     function checkTitle(){
-        if (document.title.indexOf('503')!=-1){
+        if (document.title.indexOf('503')!=-1 || document.title.indexOf('404')!=-1){
             window.location.href = window.location.href;
         }
     }
@@ -196,11 +202,5 @@
             },100);
         }
     });
-
-    //ocr test
-    if (window.location.href == 'http://xk.jxufe.edu.cn/' || window.location.href == 'http://xk.jxufe.cn/'){
-        TesseractWorker.recognize('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAzUlEQVQ4jWM8c+bMfwYqAyZqGzhqKAMLPslPRyczlC66giHuWjqTIUSFTEMhQIchrjOXwVoAyaLudAYGPAaT7H0+ay8GVyD9/OUnnGpID9MPLxieE1BCsqF39y1iuKIdxxBvzYdTDRFheoVhUXk6wyI4HxTG1gy4jSQjohjurGFIB1pyLq6bIReHa0kPU5UQhu44HYYri3Yx3MWhhILE/5zhxQcqGvr6JShDSDJICGCXJ91QYJh27QSGdJwbgzIOJWTEPuFsyjhaSFMdAADqaDyuZHNGmAAAAABJRU5ErkJggg==')
-            .finally(resultOrError => console.log(resultOrError));
-    }
 })();
 
