@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         江西财经大学选课辅助
-// @version      2.2
+// @version      2.3
 // @description  还在烦恼选课慢？
 // @author       BackRunner
 // @include      *://*/lightSelectSubject/
@@ -14,10 +14,10 @@
 
 (function() {
 
-    /*if (window.location.protocol == 'https:'){
+    if (window.location.protocol == 'https:'){
         console.log('https:不是正确的选课页面，跳转中……');
         window.location.href='http://xk.jxufe.edu.cn:80/';
-    }*/
+    }
 
     const TesseractWorker = new Tesseract.TesseractWorker({
         langPath: 'https://smallfile.backrunner.top/ocr/'
