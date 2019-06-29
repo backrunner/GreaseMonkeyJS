@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         江西财经大学选课辅助
-// @version      2.6
+// @version      2.7
 // @description  还在烦恼选课慢？
 // @author       BackRunner
 // @include      *://*/lightSelectSubject/
@@ -15,7 +15,7 @@
 (function() {
 
     if (window.location.protocol == 'https:'){
-        console.log('https:不是正确的选课页面，跳转中……');
+        console.log('https://下的页面不是正确的选课页面，跳转中……');
         window.location.href='http://xk.jxufe.edu.cn:80/';
     }
 
@@ -102,8 +102,8 @@
                     //console.log(base64data);
                     var codeImg = document.getElementById('loginImg');
                     codeImg.src = base64data;
-                    TesseractWorker.recognize(base64data, {
-                        tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                    TesseractWorker.recognize(base64data, 'eng', {
+                        tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
                     })
                     //.progress(message => console.log(message))
                         .catch(err => console.error(err))
@@ -134,8 +134,8 @@
                             codeImg.src = base64data;
                             document.getElementById('authImg').appendChild(codeImg);
 
-                            TesseractWorker.recognize(base64data, {
-                                tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                            TesseractWorker.recognize(base64data,'eng',{
+                                tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
                             })
                                 .progress(message => console.log(message))
                                 .catch(err => console.error(err))
