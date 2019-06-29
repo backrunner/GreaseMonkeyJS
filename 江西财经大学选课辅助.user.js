@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         江西财经大学选课辅助
-// @version      2.7
+// @version      2.9
 // @description  还在烦恼选课慢？
 // @author       BackRunner
 // @include      *://*/lightSelectSubject/
@@ -59,18 +59,21 @@
         checkTitle();
     },100);
 
+    //flag
+    var flag_input = false;
+
     //lazy execute
     $(document).ready(function(){
         if (document.body.innerHTML.indexOf('江西财经大学')!=-1){
             //base64 function
             function getBase64Image(img) {
-                var canvas = document.createElement("canvas");
+                let canvas = document.createElement("canvas");
                 canvas.width = img.width;
                 canvas.height = img.height;
-                var ctx = canvas.getContext("2d");
+                let ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, img.width, img.height);
-                var pixels = ctx.getImageData(0, 0, img.width, img.height);
-                var pixeldata = pixels.data;
+                let pixels = ctx.getImageData(0, 0, img.width, img.height);
+                let pixeldata = pixels.data;
                 for (var i=0, len=pixeldata.length;i<len;i+=4){
                     var gray =parseInt( pixels.data[i]*0.3 + pixels.data[i+1] *0.59 + pixels.data[i+2]*0.11);
                     pixels.data[i] = gray;
@@ -96,21 +99,24 @@
 
             function changeImage_moded(){
                 var img = document.createElement('img');
-                img.src = 'loginSign.jsp?temptime'+Math.random();  //此处自己替换本地图片的地址
+                img.src = 'loginSign.jsp?t='+Math.random();  //此处自己替换本地图片的地址
                 img.onload =function() {
                     var base64data = getBase64Image(img);
                     //console.log(base64data);
                     var codeImg = document.getElementById('loginImg');
                     codeImg.src = base64data;
+                    flag_input = false;
                     TesseractWorker.recognize(base64data, 'eng', {
-                        tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+                        tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
                     })
                     //.progress(message => console.log(message))
                         .catch(err => console.error(err))
                         .then(result => {
-                        console.log(result)
-                        $('#signImg').val(result.text.replace(/\n/g,"").replace(/ /g,"").toUpperCase());
-                    })
+                            console.log(result)
+                            if (!flag_input){
+                                $('#signImg').val(result.text.replace(/\n/g,"").replace(/ /g,"").toUpperCase());
+                            }
+                        })
                         .finally(resultOrError => console.log(resultOrError));
                 }
             }
@@ -118,42 +124,44 @@
             //override callback
             function changeBoxCb_moded(originalRequest)
             {
-                if (document.getElementById('authImg').innerHTML==""){
-                    if (originalRequest.responseText=="")//如果没有满的话，则显示验证码
-                    {
-                        var img = document.createElement('img');
-                        img.src = 'loginSign.jsp';
-                        img.onload =function() {
-                            var base64data = getBase64Image(img);
-                            //console.log(base64data);
-                            var codeImg = document.createElement('img');
-                            codeImg.setAttribute('id','loginImg');
-                            codeImg.onclick = function(){
-                                changeImage_moded();
-                            };
-                            codeImg.src = base64data;
-                            document.getElementById('authImg').appendChild(codeImg);
+                if (originalRequest.responseText=="")//如果没有满的话，则显示验证码
+                {
+                    $('#loginImg').remove();
+                    let img = document.createElement('img');
+                    img.src = 'loginSign.jsp?t='+Math.random();
+                    img.onload = function() {
+                        let base64data = getBase64Image(img);
+                        console.log(base64data);
+                        let codeImg = document.createElement('img');
+                        codeImg.setAttribute('id','loginImg');
+                        codeImg.onclick = function(){
+                            changeImage_moded();
+                        };
+                        codeImg.src = base64data;
+                        document.getElementById('authImg').appendChild(codeImg);
+                        flag_input = false;
 
-                            TesseractWorker.recognize(base64data,'eng',{
-                                tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-                            })
-                                .progress(message => console.log(message))
-                                .catch(err => console.error(err))
-                                .then(result => {
-                                    console.log(result);
-                                    $('#signImg').val(result.text.replace(/\n/g,"").replace(/ /g,"").toUpperCase());
-                                })
-                                .finally(resultOrError => console.log(resultOrError));
-                        }
-                        //document.getElementById('authImg').innerHTML="<img id='loginImg' src='loginSign.jsp' border=0 onclick='javascript:changeImage_moded()'>";
-                        //var codebase64 = getBase64Image(document.getElementById('loginImg'));
-                        //console.log(codebase64);
-                    } else {
-                        $('codePanel').innerHTML="<tr><td colspan='2'><span style='color:red'>检测到选课人数已满，正在自动尝试，如果验证码刷出请立刻填写验证码</span></td></tr>";
-                        setTimeout(function(){
-                            getCode();
-                        },200);
+                        TesseractWorker.recognize(base64data,'eng',{
+                            tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+                        })
+                            .progress(message => console.log(message))
+                            .catch(err => console.error(err))
+                            .then(result => {
+                            console.log(result);
+                            if (!flag_input){
+                                $('#signImg').val(result.text.replace(/\n/g,"").replace(/ /g,"").toUpperCase());
+                            }
+                        })
+                            .finally(resultOrError => console.log(resultOrError));
                     }
+                    //document.getElementById('authImg').innerHTML="<img id='loginImg' src='loginSign.jsp' border=0 onclick='javascript:changeImage_moded()'>";
+                    //var codebase64 = getBase64Image(document.getElementById('loginImg'));
+                    //console.log(codebase64);
+                } else {
+                    $('codePanel').innerHTML="<tr><td colspan='2'><span style='color:red'>检测到选课人数已满，正在自动尝试，如果验证码刷出请立刻填写验证码</span></td></tr>";
+                    setTimeout(function(){
+                        getCode();
+                    },200);
                 }
             }
 
@@ -196,6 +204,12 @@
 
             //auto get code
             getCode();
+
+            //bind
+            document.getElementById('signImg').onkeydown = function(){
+                flag_input = true;
+                console.log(1);
+            };
         } else {
             setTimeout(function(){
                 window.location.href = window.location.href;
