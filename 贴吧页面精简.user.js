@@ -2,8 +2,8 @@
 // @name         贴吧页面精简
 // @namespace    https://greasyfork.org/zh-CN/scripts/23687
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      2.7.15
-// @description  【可能是你遇到的最好用的贴吧精简脚本】，完全去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
+// @version      2.8.0
+// @description  【可能是你遇到的最好用的贴吧精简脚本】，去除各种广告及扰眼模块，全面支持各种贴吧页面，免登录看帖，【倒序看帖】
 // @author       BackRunner
 // @include      *://tieba.baidu.com/*
 // @include      *://dq.tieba.com/*
@@ -11,7 +11,7 @@
 // @include      *://jump.bdimg.com/*
 // @exclude      *://tieba.baidu.com/f/fdir*
 // @run-at       document-body
-// @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js
+// @require      https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
 // @license      MIT
 // @grant        unsafeWindow
 // @grant        GM_setValue
@@ -31,6 +31,8 @@
 // 如果您觉得本脚本好用可以赞助我一点零花
 // donate@backrunner.top (支付宝)
 // === 更新日志 ===
+// 2020.01.16 - 2.8.0
+// 修复问题
 // 2018.12.26 - 2.7.15
 // 修复Chrome新版本上的兼容问题。
 // 2018.10.21 - 2.7.14
@@ -75,10 +77,10 @@
     //        主执行区
     //=========================
     //控制台信息
-    console.warn('贴吧页面精简 by BackRunner: 初始化');
+    console.warn('贴吧页面精简: 初始化');
     //初始化
     initialize();
-    console.warn('贴吧页面精简 by BackRunner: 启动');
+    console.warn('贴吧页面精简: 启动');
     //重定向
     if (isRedirect){
         redirect();
@@ -96,11 +98,11 @@
         $(document).ready(function(){
             //加载计时
             finishTime = new Date().getTime() - startTime;
-            console.log('贴吧页面精简 by BackRunner: 页面加载用时: ' + finishTime);
-            console.warn('贴吧页面精简 by BackRunner: 开始执行惰性脚本');
+            console.log('贴吧页面精简: 页面加载用时: ' + finishTime);
+            console.warn('贴吧页面精简: 开始执行惰性脚本');
             //控制面板
             try{
-                console.warn('贴吧页面精简 by BackRunner: 正在创建控制面板');
+                console.warn('贴吧页面精简: 正在创建控制面板');
                 if(isCtrlPanelOn){
                     createControlPanel();
                 }
@@ -125,6 +127,8 @@
                 closeGuide();
                 //弹框关闭 *20181013
                 removePopupModal();
+                //关注按钮修复 *20200116
+                fixFocusButton();
             } else {
                 if (window.location.href.indexOf("tieba.baidu.com/p/") != -1){
                     addListenerToPage();
@@ -133,12 +137,12 @@
                     reverseorder();
                 } else {
                     if (window.location.href.indexOf("tieba.baidu.com/group") != -1){
-                        console.warn('贴吧页面精简 by BackRunner: 当前位于群组页面，不执行群组页面惰性脚本');
+                        console.warn('贴吧页面精简: 当前位于群组页面，不执行群组页面惰性脚本');
                     } else {
                         if (homePageMatch.test(window.location.href)){
                             bindCleanIndexADEvent();
                         } else {
-                            console.warn('贴吧页面精简 by BackRunner: 页面未适配延迟脚本');
+                            console.warn('贴吧页面精简: 页面未适配延迟脚本');
                         }
                     }
                 }
@@ -150,10 +154,10 @@
             var n=0;
             function check(){
                 var times = n+1;
-                console.warn('贴吧页面精简 by BackRunner: 延迟脚本正在执行第 ' + times + ' 次');
+                console.warn('贴吧页面精简: 延迟脚本正在执行第 ' + times + ' 次');
                 //控制面板
                 try{
-                    console.warn('贴吧页面精简 by BackRunner: 正在创建控制面板');
+                    console.warn('贴吧页面精简: 正在创建控制面板');
                     if(isCtrlPanelOn){
                         createControlPanel();
                     }
@@ -177,6 +181,8 @@
                     closeGuide();
                     //弹框关闭 *20181013
                     removePopupModal();
+                    //修复关注按钮 *20200116
+                    fixFocusButton();
                 } else {
                     if (window.location.href.indexOf("tieba.baidu.com/p/") != -1){
                         addListenerToPage();
@@ -206,7 +212,7 @@
             function check(){
                 //控制面板
                 try{
-                    console.warn('贴吧页面精简 by BackRunner: 正在创建控制面板');
+                    console.warn('贴吧页面精简: 正在创建控制面板');
                     if(isCtrlPanelOn){
                         createControlPanel();
                     }
@@ -229,10 +235,10 @@
         $(document).ready(function(){
             //加载计时
             finishTime = new Date().getTime() - startTime;
-            console.log('贴吧页面精简 by BackRunner: 页面加载用时: ' + finishTime);
+            console.log('贴吧页面精简: 页面加载用时: ' + finishTime);
             //控制面板
             try{
-                console.warn('贴吧页面精简 by BackRunner: 正在创建控制面板');
+                console.warn('贴吧页面精简: 正在创建控制面板');
                 if(isCtrlPanelOn){
                     createControlPanel();
                 }
@@ -247,7 +253,7 @@
                 console.error(e);
             }
         });
-        console.warn('贴吧页面精简 by BackRunner: 后处理脚本已跳过');
+        console.warn('贴吧页面精简: 后处理脚本已跳过');
     }
     //=========================
 
@@ -422,7 +428,7 @@
                         cssText += '.top-sec {display: none !important;}';
                     }
                 } catch (e){
-                    console.error('贴吧页面精简 by BackRunner: 登录状态检查错误');
+                    console.error('贴吧页面精简: 登录状态检查错误');
                     console.error(e);
                 }
                 //直播秀
@@ -493,7 +499,7 @@
         //底部信息css
         cssText += '#footer {padding-bottom:0px !important;}';
 
-        console.log('贴吧页面精简 by BackRunner: css创建完成');
+        console.log('贴吧页面精简: css创建完成');
 
         var element = document.createElement('link');
         element.rel="stylesheet";
@@ -509,14 +515,14 @@
             document.body.appendChild(modStyle);
             modStyle.innerHTML = cssText;
         }
-        console.log('贴吧页面精简 by BackRunner: css已添加');
+        console.log('贴吧页面精简: css已添加');
     }
     //列表翻页监听
     function addListenerToList(){
         $('#frs_list_pager a').each(function(){
             this.addEventListener('click',listPageTurnEvent);
         });
-        console.log('贴吧页面精简 by BackRunner: 列表翻页监听添加完毕');
+        console.log('贴吧页面精简: 列表翻页监听添加完毕');
     }
     //帖子、精品翻页监听
     function addListenerToNav(){
@@ -528,7 +534,7 @@
     }
     //列表翻页监听事件
     function listPageTurnEvent(){
-        console.warn('贴吧页面精简 by BackRunner: 列表翻页事件触发');
+        console.warn('贴吧页面精简: 列表翻页事件触发');
         setTimeout(function(){
             var interval = setInterval(check,sleepTimeWhenPageTurn * checkrate);
             function check(){
@@ -553,10 +559,10 @@
         $('.l_pager a').each(function(){
             this.addEventListener('click',pageTurnEvent);
         });
-        console.log('贴吧页面精简 by BackRunner: 帖子翻页监听添加完毕');
+        console.log('贴吧页面精简: 帖子翻页监听添加完毕');
     }
     function pageTurnEvent(){
-        console.warn('贴吧页面精简 by BackRunner: 帖子翻页事件触发');
+        console.warn('贴吧页面精简: 帖子翻页事件触发');
         setTimeout(function(){
             var interval = setInterval(check,sleepTimeWhenPageTurn * checkrate);
             function check(){
@@ -585,28 +591,28 @@
     }
     //触点推广
     function tpointADClean(){
-        console.log('贴吧页面精简 by BackRunner: 开始精简触点推广');
+        console.log('贴吧页面精简: 开始精简触点推广');
         var pointad = document.getElementsByClassName('tpoint-imgs');
-        console.log('贴吧页面精简 by BackRunner: 抓取到的广告元素数量: '+pointad.length);
+        console.log('贴吧页面精简: 抓取到的广告元素数量: '+pointad.length);
         for(var i=0;i<pointad.length;i++){
             pointad[i].parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.removeChild(pointad[i].parentNode.parentNode.parentNode.parentNode.parentNode);
         }
-        console.log('贴吧页面精简 by BackRunner: 触点推广精简完毕');
+        console.log('贴吧页面精简: 触点推广精简完毕');
     }
 
     //列表内广告
     function adinListClean(){
-        console.log('贴吧页面精简 by BackRunner: 开始精简列表内广告');
+        console.log('贴吧页面精简: 开始精简列表内广告');
         var adinList = document.getElementsByClassName('threadlist_rep_num');
         var num = 0;
-        console.log('贴吧页面精简 by BackRunner: 列表内元素抓取量: '+adinList.length);
+        console.log('贴吧页面精简: 列表内元素抓取量: '+adinList.length);
         for (var i=0;i<adinList.length;i++){
             if (adinList[i].title === "广告" || adinList[i].title === "热门"){
                 num++;
                 adinList[i].parentNode.parentNode.parentNode.parentNode.removeChild(adinList[i].parentNode.parentNode.parentNode);
             }
         }
-        console.log('贴吧页面精简 by BackRunner: 列表内广告精简完毕，共精简 '+ num + ' 个');
+        console.log('贴吧页面精简: 列表内广告精简完毕，共精简 '+ num + ' 个');
         //新增根据class过滤
         var list = document.getElementById('thread_list').children;
         for (i=0;i<list.length;i++){
@@ -617,7 +623,7 @@
                 }
             }
         }
-        console.log('贴吧页面精简 by BackRunner: 扫描列表精简其他广告');
+        console.log('贴吧页面精简: 扫描列表精简其他广告');
         //清理无用tab *20181012
         var tabs = document.getElementsByClassName("j_tbnav_tab_a");
         for (i=0;i<tabs.length;i++){
@@ -632,13 +638,13 @@
 
     //贴内广告
     function adinPageClean(){
-        console.log('贴吧页面精简 by BackRunner: 开始精简贴内广告');
+        console.log('贴吧页面精简: 开始精简贴内广告');
         var ad = document.getElementsByClassName('iframe_wrapper');
-        console.log('贴吧页面精简 by BackRunner: 抓取到的广告元素数量: '+ad.length);
+        console.log('贴吧页面精简: 抓取到的广告元素数量: '+ad.length);
         for(var i=0;i<ad.length;i++){
             ad[i].parentNode.parentNode.removeChild(ad[i].parentNode);
         }
-        console.log('贴吧页面精简 by BackRunner: 贴内广告精简完毕');
+        console.log('贴吧页面精简: 贴内广告精简完毕');
         //贴内插入广告
         var plus = document.getElementsByClassName('d_name');
         for (i=0;i<plus.length;i++){
@@ -656,17 +662,17 @@
             login.innerHTML="PageData.user.is_login = true";
             document.head.appendChild(login);
         } catch(e){
-            console.error('贴吧页面精简 by BackRunner: 免登录看帖加载错误');
+            console.error('贴吧页面精简: 免登录看帖加载错误');
             console.error(e);
         }
     }
 
     //更新提醒
     function updateAlert(){
-        var s_update = "贴吧页面精简 by BackRunner：\n检测到脚本版本更改\n\n";
+        var s_update = "贴吧页面精简：\n检测到脚本版本更改\n\n";
         var version = GM_getValue("version");
         if (version !== GM_info.script.version){
-            console.warn("贴吧页面精简 by BackRunner：检测到脚本版本更改：" + version + " → " + GM_info.script.version);
+            console.warn("贴吧页面精简：检测到脚本版本更改：" + version + " → " + GM_info.script.version);
             if (version === undefined){
                 version = "未知";
             }
@@ -677,9 +683,9 @@
                     s_update += "版本已从 " + version + " 更新为 " + GM_info.script.version + "\n\n" + GM_info.script.version + "版本的更新内容为：\n修复对新版Chrome的兼容性问题。\n\n如果遇到Bug请及时提交反馈，感谢。\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
                 case "未知":
-                    s_update += "欢迎使用贴吧页面精简脚本 by BackRunner\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
+                    s_update += "欢迎使用贴吧页面精简脚本\n您当前的脚本版本为： " + version + "\n\n【关于设置】\n您可以通过右上角的设置面板设置相关功能以获得最佳体验\n\n【重要提醒！必看！】\n如果您没有安装Adblock，请安装Adblock以获得最佳体验\n\n由于这个脚本已经比较稳定，后续只修复Bug和根据贴吧的变化添补新功能\n";
                     break;
-                case "2.7.15":
+                case "2.8.0":
                     s_update += "版本已从 " + version + " 降级为 " + GM_info.script.version + "\n\n" + "建议使用最新版本的脚本以获得最佳体验\n降级会造成您的设置丢失，请检查您的设置\n";
                     break;
             }
@@ -687,7 +693,7 @@
             alert(s_update);
             GM_setValue("version",GM_info.script.version);
         } else {
-            console.warn("贴吧页面精简 by BackRunner：未检测到脚本版本更改");
+            console.warn("贴吧页面精简：未检测到脚本版本更改");
         }
     }
     //创建顶栏控制面板
@@ -701,8 +707,7 @@
                 var a = document.createElement('a');
 
                 //主层设置
-                a.innerHTML = "贴吧页面精简脚本设置";
-                div.setAttribute('style','padding-top:6px');
+                a.innerHTML = "脚本设置";
 
                 //主层事件
                 div.addEventListener('mouseenter',cpOnMouseEnter);
@@ -766,7 +771,7 @@
                 console.error(e);
             }
         } else {
-            console.warn('贴吧页面精简 by BackRunner: 控制面板已存在');
+            console.warn('贴吧页面精简: 控制面板已存在');
         }
     }
     //菜单项创建
@@ -1020,7 +1025,7 @@
                     createFooterElement(foot,"捐赠作者(支付宝二维码)","https://smallfile.backrunner.top/images/alipay.jpg",true);
                     footDiv.appendChild(foot);
                     footDiv.appendChild(id);
-                    console.warn('贴吧页面精简 by BackRunner: 底部信息添加完成');
+                    console.warn('贴吧页面精简: 底部信息添加完成');
                 } catch(e){
                     console.error(e);
                 }
@@ -1038,14 +1043,14 @@
                         createFooterElement(foot,"向作者捐款(支付宝二维码)","https://smallfile.backrunner.top/images/alipay.jpg",true);
                         footDiv.appendChild(foot);
                         footDiv.appendChild(id);
-                        console.warn('贴吧页面精简 by BackRunner: 底部信息添加完成');
+                        console.warn('贴吧页面精简: 底部信息添加完成');
                     } catch(e){
                         console.error(e);
                     }
                 }
             }
         } else {
-            console.warn('贴吧页面精简 by BackRunner: 底部信息已存在');
+            console.warn('贴吧页面精简: 底部信息已存在');
         }
     }
     function addFinishTimeToFooter(){
@@ -1081,7 +1086,7 @@
         if (isHeadimg){
             try{
                 var forumcard = document.getElementById('forum-card-banner');
-                console.warn('贴吧页面精简 by BackRunner: 正在精简头图');
+                console.warn('贴吧页面精简: 正在精简头图');
                 if (forumcard !== null){
                     if (forumcard.getAttribute("src")!==""){
                         forumcard.setAttribute("src","");
@@ -1130,7 +1135,7 @@
                 var rightbtn = document.getElementsByClassName('core_title_btns')[0];
                 var btnli = document.createElement('li');
                 var btn = document.createElement('a');
-                console.warn('贴吧页面精简 by BackRunner: 正在创建倒序查看按钮');
+                console.warn('贴吧页面精简: 正在创建倒序查看按钮');
                 //判定是否为另一个帖子
                 var lastpage = initialize_var('reverse_lastpage','');
                 var currenthref = window.location.href;
@@ -1196,7 +1201,7 @@
         setTimeout(function(){
             var status = initialize_var('reverse_status',false);
             if (status){
-                console.warn('贴吧页面精简 by BackRunner: 正在翻转当前页内容');
+                console.warn('贴吧页面精简: 正在翻转当前页内容');
 
                 //获取当前的pn
                 var search = window.location.search;
@@ -1241,7 +1246,7 @@
         for (var i = 0;i<trashList.length;i++){
             GM_deleteValue("trashList[i]");
         }
-        console.warn('贴吧页面精简 by BackRunner: 版本更新，已删除废弃变量');
+        console.warn('贴吧页面精简: 版本更新，已删除废弃变量');
     }
     //打折卡等弹框屏蔽
     function removePopupModal(){
@@ -1249,6 +1254,9 @@
         var dialogmodal = document.getElementsByClassName('dialogJmodal');
         for (var i = 0;i<dialog.length;i++){
             dialog[i].parentNode.removeChild(dialog[i]);
+            if (dialog[i].innerHTML.indexOf('确定不再关注' != -1)){
+                continue;
+            }
         }
         for (i = 0;i<dialogmodal.length;i++){
             dialogmodal[i].parentNode.removeChild(dialogmodal[i]);
@@ -1274,7 +1282,7 @@
         var btn = document.getElementById('btn_more');
         var a = btn.children[0];
         if (!indexADEvent_a){
-            console.log("贴吧页面精简 by BackRunner: 已绑定首页动态广告清理的按钮点击事件");
+            console.log("贴吧页面精简: 已绑定首页动态广告清理的按钮点击事件");
             a.addEventListener('click',function(){
                 setTimeout(function(){
                     cleanADinIndex();
@@ -1283,10 +1291,10 @@
             indexADEvent_a = true;
         }
         if (!indexADEvent_scroll){
-            console.log("贴吧页面精简 by BackRunner: 已绑定首页动态广告清理的滚动事件");
+            console.log("贴吧页面精简: 已绑定首页动态广告清理的滚动事件");
             document.onscroll = function(){
                 if (document.documentElement.scrollTop - windowTempScrollTop > 300){
-                    console.log("贴吧页面精简 by BackRunner: 滚动触发，正在清理动态内的广告");
+                    console.log("贴吧页面精简: 滚动触发，正在清理动态内的广告");
                     cleanADinIndex();
                     windowTempScrollTop = document.documentElement.scrollTop;
                 }
@@ -1309,7 +1317,7 @@
         }
     }
     function clearScrollTopTemp(){
-        console.log("贴吧页面精简 by BackRunner: 清理滚动高度缓存");
+        console.log("贴吧页面精简: 清理滚动高度缓存");
         windowTempScrollTop = 0;
     }
     function cleanADinIndex(){
@@ -1322,6 +1330,15 @@
                 count++;
             };
         }
-        console.log("贴吧页面精简 by BackRunner: 清理了"+count+"条动态内的广告");
+        console.log("贴吧页面精简: 清理了"+count+"条动态内的广告");
+    }
+    // 修复关注按钮
+    function fixFocusButton(){
+        $(document).on('mousedown', '.islike_focus' ,function(){
+            console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+            setTimeout(function(){
+                window.location.reload();
+            }, 100);
+        });
     }
 })();
