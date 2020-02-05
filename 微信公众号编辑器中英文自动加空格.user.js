@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         微信公众号编辑器中英文自动加空格
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      2020.1
+// @version      2020.2
 // @description  在微信公众号编辑器中加入一个用于自动在中英文间添加空格的按钮
 // @author       BackRunner
 // @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit*
@@ -17,6 +17,38 @@
     var yiban;
 	var count = 0;
     var retry = 0;
+
+    // const
+
+    const CJK = '\u2e80-\u2eff\u2f00-\u2fdf\u3040-\u309f\u30a0-\u30fa\u30fc-\u30ff\u3100-\u312f\u3200-\u32ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff';
+
+    const ANY_CJK = new RegExp(`[${CJK}]`);
+
+    // common symbols
+    const SYMBOL_WIDE = '`~!@#$%*^&()/\\-+=<>?:"{}|,.;\'[\\]·~￥%——|\\\\';
+    const SYMBOL = '`~!@#$%^&()/\\-+=<>?:"{}|,.;\'[\\]·~￥%——|\\\\';
+    const SYMBOL_LEFT = '`~!@#$%^&(/\\-+=<>?:"{|,.;\'[·~￥%——|\\\\';
+    const SYMBOL_RIGHT = '`~!@#$%^&)/\\-+=<>?:"}|,.;\'\\]·~￥%——|\\\\';
+    const SYMBOL_SAFE = '`~!#$%^&/+=<>?:"|,;\'·~￥%——|\\\\';
+
+    const ALPHA_CJK = new RegExp(`([A-Za-z_])([${CJK}]+)`, 'g');
+    const CJK_ALPHA = new RegExp(`([${CJK}]+)([A-Za-z_])`, 'g');
+    const NUMBER_CJK = new RegExp(`([0-9_])([${CJK}]+)`, 'g');
+    const CJK_NUMBER = new RegExp(`([${CJK}]+)([0-9_])`, 'g');
+    const CJK_AND_ALPHA = new RegExp(`([${CJK}]+)(&)([A-Za-z_])`, 'g');
+    const ALPHA_AND_CJK = new RegExp(`([A-Za-z_])(&)([${CJK}]+)`, 'g');
+    const ALPHA_SYMBOL_CJK = new RegExp(`([A-Za-z_])([${SYMBOL_RIGHT}])([${CJK}])`, 'g');
+    const CJK_SYMBOL_ALPHA = new RegExp(`([${CJK}])([${SYMBOL_LEFT}])([A-Za-z_])`, 'g');
+    const NUMBER_SYMBOL_CJK = new RegExp(`([0-9_])([${SYMBOL}])([${CJK}])`, 'g');
+    const CJK_SYMBOL_NUMBER = new RegExp(`([${CJK}])([${SYMBOL}])([0-9_])`, 'g');
+    const CJK_BRACKET = new RegExp(`([${CJK}])([<\\[{\\(])`, 'g');
+    const BRACKET_CJK = new RegExp(`([>\\]\\)}])([${CJK}])`, 'g');
+    const ALPHA_NUMBER_CJK = new RegExp(`([A-Za-z_])([0-9_])([${CJK}])`, 'g');
+    const CJK_SYMBOL_SYMBOL = new RegExp(`([${CJK}])([${SYMBOL_WIDE}])([${SYMBOL_WIDE}])`, 'g');
+    const SYMBOL_SYMBOL_CJK = new RegExp(`([${SYMBOL_WIDE}])([${SYMBOL_WIDE}])([${CJK}])`, 'g');
+    const CJK_SYMBOL_CJK_SYMBOL_CJK = new RegExp(`([${CJK}])([${SYMBOL_SAFE}])([${CJK}])([${SYMBOL_SAFE}])([${CJK}])`, 'g');
+    const CJK_SYMBOL_CJK = new RegExp(`([${CJK}])([${SYMBOL_SAFE}])([${CJK}])`, 'g');
+    const CJK_ACCOUNT_CJK = new RegExp(`([${CJK}])(\\s*)(@[A-za-z0-9_]*)(\\s*)([${CJK}]+)(\\s*)([A-za-z0-9_]+)(\\s*)([${CJK}])`);
 
 	//Run
     $(document).ready(function(){
@@ -87,44 +119,39 @@
 		div.addEventListener('click',Event);
     }
 
+    const processTag = ['p', 'span'];
+
 	function Event(){
 		var iframe = document.getElementById("ueditor_0");
-		var plist = iframe.contentDocument.getElementsByTagName("p");
-        var spanlist = iframe.contentDocument.getElementsByTagName("span");
-		//console.log(plist);
-		for (let i=0;i<plist.length;i++){
-			var s = plist[i].innerHTML;
-			let p1=/([A-Za-z_])([\u4e00-\u9fa5]+)/gi;//字母 汉字
-			let p2=/([\u4e00-\u9fa5]+)([A-Za-z_])/gi;//汉字 字母
-			let p3=/([0-9_])([\u4e00-\u9fa5]+)/gi;//数字 汉字
-			let p4=/([\u4e00-\u9fa5]+)([0-9_])/gi;//汉字 数字
-			let p5 = /([A-Za-z_])([`~!@#$%^&*()_\-+=?:"{}|,.\/;'\\[\]·~！@#￥%&*——\-+={}‘’])([\u4e00-\u9fa5]+)/gi;//英文+符号 汉字
-			let p6 = /([\u4e00-\u9fa5]+)([`~!@#$%^&*()_\-+=?:"{}|,.\/;'\\[\]·~！@#￥%&*——\-+={}‘’])([A-Za-z_])/gi;//汉字 符号+英文
-            let p10 = /([0-9_])([`~!@#$%^&*()_\-+=?:"{}|,.\/;'\\[\]·~！@#￥%&*——\-+={}‘’])([\u4e00-\u9fa5]+)/gi;//数字+符号 汉字
-            let p11 = /([\u4e00-\u9fa5]+)([`~!@#$%^&*()_\-+=?:"{}|,.\/;'\\[\]·~！@#￥%&*——\-+={}‘’])([0-9_])/gi;//汉字 符号+数字
-			let p7 = /([\u4e00-\u9fa5]+)([<])([a])/gi;//汉字 括号
-			let p8 = /([a])([>])([\u4e00-\u9fa5]+)/gi;//括号 汉字
-            let p9 = /([A-Za-z_])([0-9_])([\u4e00-\u9fa5]+)/gi;//英文+数字 汉字
-			s = s.replace(p9,'$1$2 $3').replace(p1, '$1 $2').replace(p2, "$1 $2").replace(p3, "$1 $2").replace(p4, "$1 $2").replace(p5,"$1$2 $3").replace(p6,"$1 $2$3").replace(p11,"$1 $2$3").replace(p10,"$1$2 $3").replace(p7,"$1 $2$3").replace(p8,"$1$2 $3");
-			plist[i].innerHTML = s;
-			//console.log(s);
-		}
-        for (let i=0;i<spanlist.length;i++){
-			let s = spanlist[i].innerHTML;
-			let p1=/([A-Za-z_])([\u4e00-\u9fa5]+)/gi;//字母 汉字
-			let p2=/([\u4e00-\u9fa5]+)([A-Za-z_])/gi;//汉字 字母
-			let p3=/([0-9_])([\u4e00-\u9fa5]+)/gi;//数字 汉字
-			let p4=/([\u4e00-\u9fa5]+)([0-9_])/gi;//汉字 数字
-			let p5 = /([A-Za-z_])([`~!@#$%^&*()_\-+=?:"{}|,.\/;'\\[\]·~！@#￥%&*——\-+={}‘’])([\u4e00-\u9fa5]+)/gi;//英文+符号 汉字
-			let p6 = /([\u4e00-\u9fa5]+)([`~!@#$%^&*()_\-+=?:"{}|,.\/;'\\[\]·~！@#￥%&*——\-+={}‘’])([A-Za-z_])/gi;//汉字 符号+英文
-            let p10 = /([0-9_])([`~!@#$%^&*()_\-+=?:"{}|,.\/;'\\[\]·~！@#￥%&*——\-+={}‘’])([\u4e00-\u9fa5]+)/gi;//数字+符号 汉字
-            let p11 = /([\u4e00-\u9fa5]+)([`~!@#$%^&*()_\-+=?:"{}|,.\/;'\\[\]·~！@#￥%&*——\-+={}‘’])([0-9_])/gi;//汉字 符号+数字
-			let p7 = /([\u4e00-\u9fa5]+)([<])([a])/gi;//汉字 括号
-			let p8 = /([a])([>])([\u4e00-\u9fa5]+)/gi;//括号 汉字
-            let p9 = /([A-Za-z_])([0-9_])([\u4e00-\u9fa5]+)/gi;//英文+数字 汉字
-			s = s.replace(p9,'$1$2 $3').replace(p1, '$1 $2').replace(p2, "$1 $2").replace(p3, "$1 $2").replace(p4, "$1 $2").replace(p5,"$1$2 $3").replace(p6,"$1 $2$3").replace(p11,"$1 $2$3").replace(p10,"$1$2 $3").replace(p7,"$1 $2$3").replace(p8,"$1$2 $3");
-			spanlist[i].innerHTML = s;
-			//console.log(s);
-		}
+        for (let tag of processTag) {
+            var list = iframe.contentDocument.getElementsByTagName(tag);
+            //console.log(plist);
+            for (let i=0;i<list.length;i++){
+                var s = list[i].innerHTML;
+                list[i].innerHTML = replaceText(s);
+            }
+        }
 	}
+
+    function replaceText(text){
+        text = text.replace(ALPHA_NUMBER_CJK, '$1$2 $3');
+        text = text.replace(ALPHA_CJK, '$1 $2');
+        text = text.replace(CJK_ALPHA, '$1 $2');
+        text = text.replace(NUMBER_CJK, '$1 $2');
+        text = text.replace(CJK_NUMBER, '$1 $2');
+        text = text.replace(CJK_AND_ALPHA, '$1 $2 $3');
+        text = text.replace(ALPHA_AND_CJK, '$1 $2 $3');
+        text = text.replace(ALPHA_SYMBOL_CJK, '$1$2 $3');
+        text = text.replace(CJK_SYMBOL_ALPHA, '$1 $2$3');
+        text = text.replace(NUMBER_SYMBOL_CJK, '$1$2 $3');
+        text = text.replace(CJK_SYMBOL_NUMBER, '$1 $2$3');
+        text = text.replace(CJK_SYMBOL_SYMBOL, '$1 $2$3');
+        text = text.replace(SYMBOL_SYMBOL_CJK, '$1$2 $3');
+        text = text.replace(BRACKET_CJK, '$1 $2');
+        text = text.replace(CJK_BRACKET, '$1 $2');
+        text = text.replace(CJK_SYMBOL_CJK_SYMBOL_CJK, '$1 $2 $3 $4 $5');
+        text = text.replace(CJK_SYMBOL_CJK, '$1 $2 $3');
+        text = text.replace(CJK_ACCOUNT_CJK, '$1 $3$5$7 $9');
+        return text;
+    }
 })();
