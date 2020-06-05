@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         微信公众号编辑器中英文自动加空格
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      2020.3
+// @version      2020.4
 // @description  在微信公众号编辑器中加入一个用于自动在中英文间添加空格的按钮
 // @author       BackRunner
 // @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit*
