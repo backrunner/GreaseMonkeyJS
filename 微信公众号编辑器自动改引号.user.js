@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         微信公众号编辑器自动改引号
 // @namespace    https://coding.net/u/BackRunner/p/GreaseMonkey-JS/git
-// @version      2020.1
+// @version      2020.6
 // @description  在微信公众号编辑器中加入一个用于自动改引号的按钮
 // @author       BackRunner
 // @include      *mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit*
@@ -22,7 +22,7 @@
     $(document).ready(function(){
         setTimeout(function(){
             getToolbar();
-        },10000);
+        }, 5000);
     });
 
 	//Functions
@@ -63,7 +63,6 @@
         wrap.appendChild(div);
 		div.appendChild(btn_name);
         var breakdiv = document.getElementById("br-breakdiv");
-        console.log(breakdiv);
         if (typeof breakdiv == 'undefined' || breakdiv == null){
             breakdiv = document.createElement("div");
             breakdiv.setAttribute("id","br-breakdiv");
@@ -92,7 +91,6 @@
 		var iframe = document.getElementById("ueditor_0");
 		var plist = iframe.contentDocument.getElementsByTagName("p");
         var spanlist = iframe.contentDocument.getElementsByTagName("span");
-		console.log(plist);
 		for (let i=0;i<plist.length;i++){
 			let s = plist[i].innerHTML;
 			console.log(s);
